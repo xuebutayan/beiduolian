@@ -1,0 +1,188 @@
+<include file="App/Home/View/Public/header.html"/>
+<style type="text/css">
+.top-bg{height: 320px;background: url(/Uploads/Public/Uploads/2016-12-03/584220093ad3d.png) scroll no-repeat center 0;}
+.borrow-left,.borrow-right{width:585px;height: 235px;font-size:26px;text-align: center;line-height: 115px;border:1px solid #ccc;}
+.borrow-left{float: left;}
+.borrow-right{float: right;}
+.clear:after{height:0;content:".";clear:both;display:block;visibility:hidden;}
+
+.invest1,.invest2{width:585px;height: 295px;border: 1px solid #ccc;}
+.invest1{float: left;font-size: 14px;line-height:30px;}
+.invest2{float: right;}
+.record_list {width: 585px;}
+.record_title li {width: auto;}
+.record_list tr td, .record_list tr th {padding:0 10px;width: auto;}
+</style>
+<p class="top-bg"></p>
+<div class="main_box">
+<div class="bbox1 clear" style="margin-top: 5px;">
+<div class="borrow-left">
+	贷款成功
+	<p><span id="bsuccess">{$config.borrow_success|default=0}</span></p>
+</div>
+<div class="borrow-right">
+	资金池
+	<p><span id="zjc">{$config.invest_money}</span></p>
+</div>
+</div>
+<p style="height:30px;"></p>
+<div class="bbox2 clear">
+<div class="invest1">
+	<p align="center" style="font-size: 18px;">我要贷款</p>
+	<p>尊敬的 {$member.user_name|default="游客"} 您好，您当前的账户类型为 {$agent_type[intval($member['user_levels'])][0]} ，您的贷款最高额度为 {$agent_type[intval($member['user_levels'])][1]} 元</p>
+	<div class="invest-form">
+		<switch name="borrow_info.status">
+		<case value="0">
+	<p>您于{$borrow_info.applydate|date='Y-m-d H:i:s',###}提交了贷款申请，贷款金额为{$borrow_info.money}元，该申请尚未批准。</p>
+	<p><a class="button" href="javascript:chexiao({$borrow_info.bid})">撤销</a></p>
+		</case>
+		<case value="1|2|3">
+	<p>您于{$borrow_info.applydate|date='Y-m-d H:i:s',###}提交了贷款申请，贷款金额为{$borrow_info.money}元，该申请已经批准。</p>
+	<p>批准时间{$borrow_info.allowdate|date='Y-m-d H:i:s',###} 本息总额 <?php echo($borrow_info['money']*1.2);?> 元</p>
+	<p><a class="button" href="javascript:;">恭喜您</a></p>
+		</case>
+		<default />
+		<form id="borrow-form" action="{:U('Borrow/doBorrow')}" method="post" jump-url="__SELF__">
+		<ul>
+			<li><label>贷款金额</label><input type="text" name="money" autocomplete="off" onkeyup="zhuan(this)">*贷款金额必须为100的倍数</li>
+			<li><label>利息预算</label><span id="interest" style="color:red">0</span></li>
+			<li><label>支付密码</label><input type="password" name="password"></li>
+		</ul>
+		<input type="submit" value="提交">
+		</form>
+		</switch>
+	</div>
+</div>
+<div class="invest2">
+	<p>当前账户已贷款金额 <egt name="borrow_info['status']" value="2">{$borrow_info.money|default="0"}<else />0</egt> 元，可用余额 <eq name="borrow_info['status']" value="2">{$borrow_info.money|default="0"}<else />0</eq> 元</p>
+	<if condition="$borrow_info['istransfer']"><a class="button" href="javascript:;">已转入代理中心</a><else /><a class="button" href="javascript:daili();">转入代理中心</a></if>
+</div>
+</div>
+<p style="height:30px;"></p>
+<div class="bbox2 clear">
+<div class="invest1">
+<p>贷款申请列表</p>
+          <div class="record">
+            <table class="latest_list record_list" align="center" border="0" cellpadding="0" cellspacing="0">
+              <tbody id="coinorderlist">
+              <tr>
+              	<th>序号</th>
+            <th>提交时间</th>
+            <th>用户名</th>
+            <th>贷款金额</th>
+            <th>状态</th>
+              </tr>
+                <volist name='list1' id='vo'>
+                <tr>
+                <td class="list_con1">{$vo.bid}</td>
+                <td class="list_con1">{$vo.applydate|date='Y-m-d H:i:s',###}</td>
+                <td class="list_con1">{$vo.user_name|utf8Substr=0,2}***{$vl.user_name|utf8Substr=4,15}</td>
+                <td class="list_con1">{$vo.money}</td>
+                <td class="list_con1">未批准</td>
+                </tr>
+                </volist>
+              </tbody>
+            </table>
+          </div>
+</div>
+<div class="invest2">
+<p>已贷款列表</p>
+          <div class="record">
+            <table class="latest_list record_list" align="center" border="0" cellpadding="0" cellspacing="0">
+              <tbody id="coinorderlist2">
+              <tr>
+              	<th>序号</th>
+            <th>批准时间</th>
+            <th>用户名</th>
+            <th>贷款金额</th>
+            <th>应还总额</th>
+            <th>已还金额</th>
+            <th>余欠</th>
+              </tr>
+                <volist name='list2' id='vo'>
+                <tr>
+                	<td class="list_con1">{$vo.bid}</td>
+                  <td class="list_con1">{$vo.allowdate|date='Y-m-d H:i:s',###}</td>
+                  <td class="list_con1">{$vo.user_name|utf8Substr=0,2}***{$vl.user_name|utf8Substr=4,15}</td>
+                  <td class="list_con1">{$vo.money}</td>
+                  <td class="list_con1"><?php echo($vo['money']*1.2);?></td>
+                  <td class="list_con1">{$vo.paymoney|default="0"}</td>
+                  <td class="list_con1"><?php echo($vo['money']*1.2-$vo['paymoney']);?></td>
+                </tr>
+                </volist>
+              </tbody>
+            </table>
+          </div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+$("#borrow-form").validate({
+    rules: {
+    },
+    messages: {
+    },
+    submitHandler:function(form){
+        ajax_submit_form(form)
+        return false;
+    },
+    invalidHandler: function() {  //不通过回调
+        return false;
+    }
+});
+function zhuan(obj){
+	var s = parseInt(obj.value);
+	obj.value = isNaN(s)?0:s;
+	$('#interest').html(obj.value*0.02);
+}
+function chexiao(_this){
+		layer.confirm('确定撤销贷款？', {
+	  btn: ['确定','取消'], //按钮
+	  title: '撤销贷款'
+	}, function(){
+	  $.post('{:U('Borrow/cancel')}',{bid:_this},function(data){
+				   if(data['status'] == 1){
+					   layer.msg(data['info']);
+					   setTimeout(function(){location.reload();},1000);
+				   }else{
+					   layer.msg(data['info']);
+				   }
+			})
+	}, function(){
+	  layer.msg('已取消');
+	});
+
+	}
+function daili(){
+		layer.confirm('确定转入代理中心？', {
+	  btn: ['确定','取消'], //按钮
+	  title: '转入代理中心'
+	}, function(){
+	  $.post('{:U('Borrow/zhuan')}',{},function(data){
+				   if(data['status'] == 1){
+					   layer.msg(data['info']);
+					   setTimeout(function(){location.reload();},1000);
+				   }else{
+					   layer.msg(data['info']);
+				   }
+			})
+	}, function(){
+	  layer.msg('已取消');
+	});
+
+	}
+setInterval(function(){
+	$.post("{:U('Borrow/deal')}",'',function(re){
+		var data = re.data;
+		var length=parseInt(data.length)
+		if(length){
+			for(var i=0;i<length;i++){
+				$('#coinorderlist2').append('<tr><td class="list_con1">'+data[i]['bid']+'</td><td class="list_con1">'+data[i]['allowdate']+'</td><td class="list_con1">'+data[i]['user_name']+'</td><td class="list_con1">'+data[i]['money']+'</td><td class="list_con1">'+data[i]['yinghuan']+'</td><td class="list_con1">'+data[i]['paymoney']+'</td><td class="list_con1">'+data[i]['leaf']+'</td></tr>');
+			}
+		}
+		$('#zjc').html(re['invest_money']);
+		$('#bsuccess').html(re['borrow_success']);
+	});
+},10000)
+</script>
+<include file="App/Home/View/Public/footer.html"/>

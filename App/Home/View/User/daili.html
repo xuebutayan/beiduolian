@@ -1,0 +1,118 @@
+ <include file="App/Home/View/Public/header.html"/>
+ <style>
+ .pass_ybc{ min-height:400px !important;}
+ .my_add{ margin-bottom:0px !important;}
+ </style>
+<div id="main">
+  <div class="main_box">
+  <include file="App/Home/View/Public/left.html"/>
+<!-- content start -->
+<div class="raise right clearfix" style="width:940px; padding:20px; background:#fff;">
+<div class="ybc_list">
+        <div class="ybcoin">
+          <h2 class="left">人民币转入代理中心</h2>
+          <div class="clear"></div>
+        </div>
+      </div>
+
+<h2 class="choose_one">输入要转入的数量<span>(可用：<strong>{$num}</strong>)</span><span style="float:right;margin-right:20px;"><strong id="rmbout_showtips"></strong></span></h2>
+
+<form action="{:U('User/doDaili')}" method="post" id="drawform" jump-url="{:U('User/daili')}">
+<table class="my_add" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="position:relative; padding-left:90px;">转出数量
+        <input class="sum" name="money" id="money"  autocomplete="off" type="text" onkeyup="value=value.replace(/[^\d]/g,'');sjdz();">
+        </td>
+      <td>实际到帐
+        <input class="sum" id="true_daozhang" disabled="disabled" type="text">
+      </td>
+
+
+    </tr>
+    <tr>
+      <td style=" padding-left:90px;">交易密码
+        <input style="display:none" type="password">
+        <!-- for disable autocomplete on chrome -->
+        <input class="sum" name="pwdtrade" id="pwdtrade" autocomplete="off" type="password"></td>
+        <input type="hidden" name="platform" value="alpsemall" />
+        <td><input style=" float:right; margin-right:103px;" class="confirm"  value="确认提交" type="submit"></td>
+    </tr>
+  </tbody>
+</table>
+</form>
+<div class="ybc_list">
+        <div class="ybcoin">
+          <h2 class="left">转入记录</h2>
+          <div class="clear"></div>
+        </div>
+        <table class="raise_list" style="border:1px solid #e1e1df;" id="Transaction" align="center" border="0" cellpadding="0" cellspacing="0">
+      <thead>
+      <tr>
+        <th>说明</th>
+        <th>变动资金</th>
+        <th>支出/收入</th>
+        <th>成交时间</th>
+
+      </tr>
+      </thead>
+      <tbody>
+      <volist name="list" id="vo">
+      <tr>
+        <td>{$vo.content}</td>
+        <td>{$vo.money}</td>
+        <td><eq name="vo.money_type" value="1"><span style="color:#393">收入</span><else/><span style="color:#e55600">支出</span></eq></td>
+        <td>{$vo.add_time|date="Y-m-d",###}</td>
+
+      </tr>
+      </volist>
+      </tbody>
+
+    </table>
+      </div>
+</div>
+<!-- content end -->
+  </div>
+  <div class="clear"></div>
+</div>
+<script type="text/javascript">
+  $(".menu20").addClass("uc-current");
+  function sjdz(){
+        var radio = 1;
+        var m ;
+
+          m = $("#money").val()*radio;
+
+        $("#true_daozhang").val(m);
+      }
+  $("#drawform").validate({
+        rules: {
+          money:{
+            required: true,
+            //min: 100,
+            //max: 50000,
+            },
+          pwdtrade:"required",
+          //code:"required",
+        },
+        messages: {
+          money:{
+            required: "请填写转入金额",
+            //min: "提现金额最小100",
+            //max: "提现金额最大50000",
+            },
+
+          pwdtrade:"请填写交易密码",
+          //code:"请填写验证码",
+        },
+        submitHandler:function(form){
+          ajax_submit_form(form)
+          return false;
+        },
+        invalidHandler: function() {  //不通过回调
+          return false;
+        }
+      });
+</script>
+<!--footer start-->
+<include file="App/Home/View/Public/footer.html"/>

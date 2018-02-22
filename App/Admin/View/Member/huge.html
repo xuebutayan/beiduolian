@@ -1,0 +1,110 @@
+   <include file="App/Admin/View/Public/left.html"/>
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="{:U('Index/index')}">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">提现审核</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+            </div>
+        </div>
+        <div class="result-wrap">
+                <div class="result-content">
+                    <table class="result-tab" width="100%">
+                        <tr>
+                            <th>ID</th>
+                            <th>用户名</th>
+                            <th>会员ID</th>
+                            <th>mt4用户名</th>
+                            <th>mt4密码</th>
+                            <th>mt4只读密码</th>
+                            <th>身份证姓名</th>
+                            <th>身份证号码</th>
+                            <th>签发机关</th>
+                            <th>有效期限</th>
+                            <th>提交时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+  						<volist name='list' id='vo'>
+                        <tr>
+                            <td>{$vo.id}</td>
+                            <td>{$vo.user_name}</td>
+                            <td>{$vo.member_id}</td>
+                            <td>{$vo.huge_user}</td>
+                            <td>{$vo.huge_pwd|base64_decode}</td>
+                            <td>{$vo.readpass|default="-"}</td>
+                            <td>{$vo.card_name|default="-"}</td>
+                            <td>{$vo.card_no|default="-"}</td>
+                            <td>{$vo.card_issue|default="-"}</td>
+                            <td>{$vo.card_term|default="-"}</td>
+                            <td>{$vo.add_time|date='Y-m-d H:i:s',###}</td>
+                            <td><eq name="vo.status" value="0">未通过<else/><eq name="vo.status" value="2">通过<else/>审核中</eq></eq></td>
+                            <td>
+                            	<eq name="vo.status" value="1">
+                                <a class="link-update" href="javascript:void(0);" onclick="pass({$vo.id});">通过</a>
+                                &nbsp;&nbsp;
+                                <a class="link-del" href="javascript:void(0);"onclick="fail({$vo.id})">不通过</a>
+                                <else /> 操作成功</eq>
+                            </td>
+                            </tr>
+                        </volist>
+
+                    </table>
+                    <div class="list-page"> <ul>{$page}</ul></div>
+                </div>
+
+        </div>
+    </div>
+    <!--/main-->
+</div>
+</body>
+</html>
+<script>
+$(".sub-menu").eq(3).show();
+$(".sub-menu").eq(3).children("li").eq(5).addClass("on");
+function pass(id){
+	layer.prompt({title: '给用户留下只读密码', formType: 2}, function(text, index){
+		//location.href = '{:U('Pending/successByid',array('id'=>$vo['withdraw_id']))}';
+		$.post("{:U('Member/hugeId')}",{"id":id,"readpass":text},function(datas){
+				if(datas.status == 0){
+					layer.msg(datas['info']);
+					setTimeout("location.reload()",2000);
+				}else{
+					layer.msg(datas['info']);
+					setTimeout("location.reload()",2000);
+				}
+			});
+	  //layer.msg('');
+	}, function(){
+		layer.msg('已取消');
+	});
+}
+layer.config({extend:'extend/layer.ext.js'});
+function fail(id){
+    layer.prompt({title: '选择性添加审核不通过备注信息', formType: 2}, function(text, index){
+        //location.href = '{:U('Pending/successByid',array('id'=>$vo['withdraw_id']))}';
+        $.post("{:U('Member/hugeId')}",{"id":id,"no":1,"note":text},function(datas){
+                if(datas.status == 0){
+                    layer.msg(datas['info']);
+                    setTimeout("location.reload()",2000);
+                }else{
+                    layer.msg(datas['info']);
+                    setTimeout("location.reload()",2000);
+                }
+            });
+      //layer.msg('');
+    }, function(){
+        layer.msg('已取消');
+    });
+}
+</script>
+
+<script>
+function download(){
+	var add_time=$('#aaaaa1').val();
+	var end_time=$('#aaaaa2').val();
+	var url="{:U('Pending/derivedExcel')}";
+	window.location.href=url+"?add_time="+add_time+"&&end_time="+end_time;
+}
+</script>

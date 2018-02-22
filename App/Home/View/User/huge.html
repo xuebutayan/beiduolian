@@ -1,0 +1,261 @@
+<include file="App/Home/View/Public/header_huge.html"/>
+<style>
+    .pass_ybc{ min-height:400px !important;}
+    .my_add{ margin-bottom:0px !important;}
+</style>
+<script type="text/javascript">
+
+    function random(min, max) {
+    return Math.floor(min + Math.random() * (max - min));
+    }
+    $(function () {
+    $(".parameter_del").live("click", function () {
+    if (false == confirm("是否确认删除此参数?"))
+            return;
+    $(this).parent().parent().empty();
+    });
+    $(".parameter_add").click(function () {
+    var key;
+    if (($('#parameter>.field').length) >= 50) {
+    alert("最多只能添加50个账户");
+    return false;
+    }
+    do {
+    key = random(100, 999);
+    } while ($('[name="password\[' + key + '\]"]').length > 0);
+    var keymum = ($('#parameter>.field').length) + 1;
+    var html = '<tr class="field">' +
+            '<td style="position:relative; padding-left:20px;">MT4 账户' + keymum + '  登录名' +
+            ' <input class="sum" name="username[' + keymum + ']" id="username' + keymum + '"  autocomplete="off" type="text">' +
+            '</td>' +
+            '<td>密码 ' +
+            '<input class="sum" name="password[' + keymum + ']" id="password' + keymum + '" autocomplete="off" type="text">' +
+            '<button type="button" class="parameter_del" style="margin-left:10px;">删除</button></td>' +
+            '</tr>';
+    $('#parameter').append(html);
+    });
+    });</script>
+<div id="main">
+    <div class="main_box">
+        <include file="App/Home/View/Public/left.html"/>
+        <!-- content start -->
+        <div class="raise right clearfix" style="width:940px; padding:20px; background:#fff;">
+        
+            <div class="ybc_list">
+                 <div class="ybcoin">
+                      <h2 class="left">J2T MT4 账号新开户操作说明（<font color="#FF0000"><strong>必读</strong></font>）：</h2>
+                      <div class="clear"></div>
+                 </div>    
+               </div>
+                <h2 style="padding-left: 20px;border-bottom: 2px solid #f60;color: #000;font-size: 16px;margin-top: 5px;margin-bottom: 10px;"></h2>
+               <p style="padding-left:20px; margin-bottom:15px; border-bottom:1px dashed #ccc; font-size:14px; padding-bottom:10px;">
+                J2T开户链接:<a style="margin-right:130px;" href="https://j2t.cn/ref/hCx86kPyWB" target="_Blank">https://j2t.cn/ref/hCx86kPyWB</a>
+                J2T官网:<a href="http://www.just2trade.cn/" target="_Blank">http://www.just2trade.cn/</a>
+               </p>
+               <p style="padding-left:20px;">
+                   1.新会员点击<a href="https://j2t.cn/ref/hCx86kPyWB" target="_Blank"><font color="#FF0000"><strong>"J2T账户注册"</strong></font></a> 注册J2T新账户，注册好之后，用户名和密码会通过邮箱发送到您的手中，用户名一般为86+手机号码，例如8618886868686  该J2T账户和密码不需要提交，由您自己妥善保管；</p>
+               <p style="padding-left:20px;">2.首次<a href="https://j2t.cn" target="_Blank"><font color="#FF0000"><strong>"登陆J2T账号"</strong></font></a>后台后请设置密码，该密码用于"入金"和"出金"时使用，请牢记J2T账户密码；</p>
+                <p style="padding-left:20px;">3.MT4账号是登录"J2T账户"后台后可以查看到，一般为5位纯数字，例如：16766/16788 ；</p>
+                <p style="padding-left:20px;">4.进入"J2T账号"后，点击"我的账户"点击"设置"修改 MetaTrader 4 密码，该密码需要提交到"ALPS交易大盘"；</p>
+                <p style="padding-left:20px;">5.入金成功后，点击"我的账户"在杠杆栏设置杠杆比例为：1:500 （<font color="#FF0000"><strong>所有会员统一设置为1:500</strong></font>）</p>
+                <p style="padding-left:20px;">6.需要提交到ALPS交易大盘的是MT4的账号"登录名"和"密码"；</p>
+                
+                
+            <div class="ybc_list">
+                <div class="ybcoin">
+                    <h2 class="left">添加托管MT4账户</h2>
+                    <div class="clear"></div>
+                </div>
+            </div>
+
+            <h2 style="padding-left: 20px;border-bottom: 2px solid #f60;color: #000;font-size: 16px;margin-top: 5px;margin-bottom: 10px;"></h2>
+
+            <form action="{:U('User/doHuge')}" method="post" id="drawform" jump-url="{:U('User/huge')}">
+                <table class="my_add" border="0" cellpadding="0" cellspacing="0">
+                    <tbody  id="parameter">
+
+                        <!--<tr>
+                            <td style="position:relative; padding-left:90px;">
+                                J2T开户链接: <a href="https://j2t.cn/ref/hCx86kPyWB" target="_Blank">https://j2t.cn/ref/hCx86kPyWB</a>
+                            </td>
+                            <td>J2T官网:<a href="http://www.just2trade.cn/" target="_Blank">http://www.just2trade.cn/</a></td>
+                        </tr>-->
+                        <tr>
+                            <td colspan="2" style="position:relative; padding-left:20px;">
+<!--请添加您的MT4“登录名”和“密码”，点击“确认提交”，系统审核通过后会给您发“只读密码”，您可以通过“只读密码”查看自己账户的交易情况，托管MT4账户首次必须添加2个账户，如有更多账户可以点击“增加”添加多个账户“登录名”和“密码”。-->
+   <p>“托管 MT4账户”需要您进行以下操作：</p>
+   <p>1、提交 MT4“登录名”和“密码”（修改该密码不影响您正常入金/出金）</p>
+   <p>2、提交本人“身份证姓名”、“身份证号码”、“签发机关”“有效期限”（仅用于填写<strong><a style="color:#F00" href="http://www.alpscoin.com/Uploads/Uploads/订阅号信息交易.doc" target="_Blank">“订阅信息交易”</a></strong>）</p>
+   <p>3、点击“确认提交”，系统审核通过后会给您发“只读密码”，您可以通过“只读密码”查看自己账户的交易情况</p>
+   <p>4、托管MT4账户首次必须添加2个账户，如有更多账户可以点击“增加”添加多个账户</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="position:relative; padding-left:20px;">
+                                <span class="field" style=" margin-bottom: 15px;"> <button type="button" class="parameter_add"> 增加 </button></span> 
+                            </td>
+                            <td>   <input style=" float:right; margin-right:103px;" class="confirm"  value="确认提交" type="submit">  </td>
+                        </tr>
+                        <tr class="field">
+                            <td style="position:relative; padding-left:20px; width:330px;">MT4 账户1    登录名
+                                <input class="sum" name="username[1]" id="username1"  autocomplete="off" type="text">
+                            </td>
+                            <td>密码
+                                <input class="sum" name="password[1]" id="password2" autocomplete="off" type="text">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table class="my_add" border="0" cellpadding="0" cellspacing="0">
+                    <tbody>
+                        <tr class="field">
+                            <td style="position:relative; padding-left:20px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;身份证姓名
+                                <input class="sum" name="card_name" id="card_name"  autocomplete="off" type="text">
+                            </td>
+                            <td>身份证号码
+                                <input class="sum" name="card_no" id="card_no" autocomplete="off" type="text">
+                            </td>
+                        </tr>
+                        <tr class="field">
+                            <td style="position:relative; padding-left:20px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;签发机关
+                                <input class="sum" name="card_issue" id="card_issue"  autocomplete="off" type="text">
+                            </td>
+                            <td>&nbsp;&nbsp;&nbsp;有效期限
+                                <input class="sum" name="card_term" id="card_term" autocomplete="off" type="text">
+                                <font color="#666666">格式为：2017.01.01-2037.01.01</font>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+            <!--<div class="ybc_list">-->
+              <!--  <div class="ybcoin">
+                    <h2 class="left">审核结果</h2>
+                    <div class="clear"></div>
+                </div>-->
+               <!-- <p><if condition="$status === '2'">托管已审核<br>
+                    您可以通过只读密码登陆J2T MT4平台进行实时查看，以了解账户的情况<br>
+                    我们的资管团队会为您的资金安全及稳定盈利负责，请您放心
+                    <elseif condition="$status === '1'" />等待审核。。。<elseif condition="$status === '0'" />审核未通过<else />尚未托管</if></p>-->
+               
+            <!--</div>-->
+            <div class="ybc_list">
+                <div class="ybcoin">
+                    <h2 class="left">托管mt4账户列表</h2>
+                    <div class="clear"></div>
+                </div>
+            </div>
+            <h2 style="padding-left: 20px;border-bottom: 2px solid #f60;color: #000;font-size: 16px;margin-top: 5px;margin-bottom: 10px;"></h2>
+                <table class="raise_list" style="border:1px solid #e1e1df;" align="center" border="0" cellpadding="0" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>记录ID</th>
+                            <th>mt4登录名</th>
+                            <th>mt4密码</th>
+                            <th>mt4只读密码</th>
+                            <th>提交时间</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <volist name="draw_info" id="vo">
+                        <tr id="btc_box" class="btc_new" >
+                            <td id="btc_id">{$vo.id}</td>
+                            <td id="btc_wallet">{$vo.huge_user}</td>
+                            <td>{$vo.huge_pwd|base64_decode}</td>
+                            <td>{$vo.readpass|default="-"}</td>
+                            <td id="btc_created">{$vo.add_time|date='Y-m-d H:i:s',###}</td>
+                            <td class="tableEnd" id="btc_status"><eq name="vo.status" value="0">未通过<else/><eq name="vo.status" value="2">通过<else/>审核中</eq></eq></td>
+                        <td><eq name="vo.status" value="1"><a href="javascript:void(0);" onclick="chexiao({$vo.id});">撤销</a></eq><eq name="vo.status" value="0"><a href="javascript:;" onclick="layer.msg('{$vo.note|default='暂无'}')">查看原因</a> | <a href="javascript:void(0);" onclick="chexiao({$vo.id});">撤销</a></eq></td>
+                        </tr>
+                    </volist>
+                    </tbody>
+                </table>
+            
+        </div>
+        <!-- content end -->
+    </div>
+    <div class="clear"></div>
+</div>
+<script type="text/javascript">
+    function chexiao(id){
+		layer.confirm(
+		'确定撤销',
+		{btn:['确定','取消']},
+		function(){
+		  $.post("/Home/User/chexiaoHugeByid",{"id":id},function(data){
+			  if(data.status==0){
+						layer.msg(data['info']);
+						window.location.reload();
+					}else{
+						layer.msg(data['info']);
+						window.location.reload();
+					}
+			})
+		}
+		),
+		function(){
+			layer.msg('已取消');
+		}
+
+}
+    function ajax_submit_form1(form) {
+    var index = '';
+    $.ajax({
+    type: $(form).attr("method"),
+            url: $(form).attr("action"),
+            async: false,
+            data: $(form).serialize(),
+            beforeSend: function () {
+            index = layer.msg('正在提交请稍后');
+            },
+            success: function (msg) {
+            layer.msg(msg.info);
+            if (msg.status == 1) {
+            var url = $(form).attr("jump-url");
+            if (url) {
+            window.location.href = url;
+            } else {
+            window.location.reload();
+            }
+            } else {
+            layer.msg(msg.info);
+            layer.close(index);
+            //window.location.reload();
+            }
+            }
+    });
+    return false;
+    }
+    $(".menu21").addClass("uc-current");
+    $("#drawform").validate({
+    rules: {
+    money: {
+    required: true,
+            //min: 100,
+            //max: 50000,
+    },
+            pwdtrade: "required",
+            //code:"required",
+    },
+            messages: {
+            money: {
+            required: "请填写用户名",
+                    //min: "提现金额最小100",
+                    //max: "提现金额最大50000",
+            },
+                    pwdtrade: "请填写密码",
+                    //code:"请填写验证码",
+            },
+            submitHandler: function (form) {
+            ajax_submit_form1(form)
+                    return false;
+            },
+            invalidHandler: function () {  //不通过回调
+            return false;
+            }
+    });
+</script>
+<!--footer start-->
+<include file="App/Home/View/Public/footer.html"/>

@@ -1,0 +1,62 @@
+ <include file="App/Home/View/Public/header.html"/>
+ <style>
+ .pass_ybc{ min-height:400px !important;}
+ .my_add{ margin-bottom:0px !important;}
+ </style>
+<div id="main">
+  <div class="main_box">
+  <include file="App/Home/View/Public/left.html"/>
+<!-- content start -->
+<div class="raise right clearfix" style="width:940px; padding:20px; background:#fff;">
+<div class="ybc_list">
+        <div class="ybcoin">
+          <h2 class="left">MT4 B仓帐号</h2>
+          <div class="clear"></div>
+        </div>
+      </div>
+
+<h2 class="choose_one">提交在MT4平台B仓（HUGE）注册获得的账号</span><span style="float:right;margin-right:20px;"><strong id="rmbout_showtips"></strong></span></h2>
+
+<form action="{:U('Mt4/setMt4')}" method="post" id="drawform" jump-url="{:U('Mt4/index')}">
+<table class="my_add" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="position:relative; padding-left:90px;">帐号
+        <input type="text" class="sum" id="mt4" name="mt4" value="{$mt4}">
+        </td>
+        <td><input style=" float:right; margin-right:103px;" class="confirm"  value="确认提交" type="submit" <if condition="$mt4">disabled=""</if>></td>
+    </tr>
+
+  </tbody>
+</table>
+</form>
+</div>
+<!-- content end -->
+  </div>
+  <div class="clear"></div>
+</div>
+<script type="text/javascript">
+  $(".menu19").addClass("uc-current");
+
+  $("#drawform").validate({
+        rules: {
+          mt4:"required",
+          //code:"required",
+        },
+        messages: {
+
+
+          mt4:"请填写帐号",
+          //code:"请填写验证码",
+        },
+        submitHandler:function(form){
+          ajax_submit_form(form)
+          return false;
+        },
+        invalidHandler: function() {  //不通过回调
+          return false;
+        }
+      });
+</script>
+<!--footer start-->
+<include file="App/Home/View/Public/footer.html"/>

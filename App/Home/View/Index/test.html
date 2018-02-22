@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>test</title>
+</head>
+<body>
+	<table border="1">
+		<tr>
+			<td>ID</td>
+			<td>买入</td>
+			<td>卖出</td>
+			<td>是否异常</td>
+		</tr>
+		<volist name="trades" id="vo">
+		<tr>
+			<td>{$vo.member_id}</td>
+			<td>{$vo.in}</td>
+			<td>{$vo.out}</td>
+			<td>{$vo.alert}</td>
+		</tr>
+		</volist>
+	</table>
+</body>
+</html>

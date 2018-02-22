@@ -1,0 +1,286 @@
+<include file="App/Home/View/Public/header.html"/>
+<style>
+.top-bg{height: 320px;background: url(/Uploads/Public/Uploads/2016-12-03/584220093ad3d.png) scroll no-repeat center 0;}
+.borrow-left,.borrow-right{width:585px;height: 235px;font-size:26px;text-align: center;line-height: 115px;border:1px solid #ccc;}
+.borrow-left p:first-child,.borrow-right p:first-child{font-size:26px;width:198px;margin:0 auto;background:#558000;border-radius:8px;height:55px;line-height:55px;color:#fff;margin-top:40px;}
+.borrow-right p:first-child{background:#ff7700;}
+.borrow-left p:first-child+p span{color:#558000;font-size:36px;}
+.borrow-right p:first-child+p span{color:#ff7700;font-size:36px;}
+.borrow-l,.borrow-left{float: left;}
+.borrow-r,.borrow-right{float: right;}
+.clear:after{height:0;content:".";clear:both;display:block;visibility:hidden;}
+
+.borrow-invest1 .borrow-p01{font-size: 18px;text-align:center;margin-top:10px;color:#558000;font-weight:bold;line-hegiht:35px;}
+.borrow-invest1 .borrow-p02{text-indent:30px;margin-top:10px;}
+.borrow-invest1 .borrow-p02 i,.borrow-invest1 .borrow-p02 span{color:#558000;}
+.invest1,.invest2{width:585px;height: 295px;border: 1px solid #ccc;}
+.invest1{float: left;font-size: 14px;line-height:30px;}
+.invest2{float: right;}
+
+#borrow-form ul{padding-left:100px;margin-top:10px;}
+#borrow-form ul li{line-height:45px;}
+#borrow-form ul li .borrow-input{margin-left:56px;width:167px;height:40px;background:#558000;margin-top:10px;color:#fff;border:none;border-radius:3px;cursor:pointer;}
+#borrow-form ul li b{font-weight:100;color:#f00;}
+
+.invest2 .borrow-notic_top{height:127px;}
+.invest2 .borrow-notic_top p:first-child{text-align:center;color:#ff7700;font-size:16px;position:relative;top:13px;}
+.invest2 .borrow-notic_top p:first-child span{color:#f00;}
+.invest2 .borrow-notic_top #js-daili{width:167px;height:40px;line-height:40px;display:block;margin:0 auto;text-align:center;position:relative;top:30px;border-radius:3px;cursor: pointer;}
+.invest2 .borrow-notic_top a:hover{color:#fff;}
+.invest2 .borrow-notic{height:168px;width:100%;border:1px solid #ccc;}
+.invest2 .borrow-notic li h3{font-size: 18px;text-align:center;margin-top:10px;color:#ff7700;font-weight:bold;line-hegiht:35px;margin-bottom:20px;}
+.invest2 .borrow-notic li p{line-height:20px;color:#f00;padding-left:20px;}
+
+.borrow-l p:first-child{line-height:30px;font-size:16px;color:#558000;}
+.borrow-r p:first-child{line-height:30px;font-size:16px;color:#ff7700;}
+.record_list {width: 585px;}
+.record_title li {width: auto;}
+.record_list tr td, .record_list tr th {padding:0 10px;width: auto;}
+
+.list_con1{background:#f8f8f8 !important;}
+.borrow-invest1 .invest-form p{text-indent:160px;}
+.borrow-invest1 .invest-form p span{color:#558000;}
+.borrow-invest1 .invest-form a{width:167px;height:40px;background:#558000;line-height:40px;display:block;margin:0 auto;text-align:center;position:relative;top:30px;border-radius:3px;border:none !important;}
+.borrow-invest1 .invest-form a:hover{color:#fff;}
+
+.borrow-number_box1,.borrow-number_box{position: relative;margin:0 auto;top:20px;overflow: hidden;-webkit-perspective: 1000px;-moz-perspective: 1000px;-ms-perspective: 1000px;-o-perspective: 1000px;perspective: 1000px;-webkit-transform-style: preserve-3d;-moz-transform-style: preserve-3d;-ms-transform-style: preserve-3d;-o-transform-style: preserve-3d;transform-style: preserve-3d;text-align:center;display:table}
+.borrow-number_box1 .unit,.borrow-number_box .unit {float: left;margin-left: 8px;position: relative;height: 74px;width: 60px;overflow: visible;display:inline;}
+.borrow-number_box1 div.unit:first-child,.borrow-number_box div.unit:first-child{margin-left: 0px;}
+.borrow-number_box1 .unit.add_f,.borrow-number_box .unit.add_f {margin-left: 0}
+.borrow-number_box1 .unit.add_w ,.borrow-number_box .unit.add_w {margin-left: 20px}
+.borrow-number_box1 .top, .borrow-number_box1 .btm,.borrow-number_box .top, .borrow-number_box .btm {height: 36px;width: 60px;overflow: hidden;position: absolute;color: #FFF}
+.borrow-number_box1 .unit span,.borrow-number_box .unit span {font: 66px/72px Helvetica;width: 60px;text-align: center;position: absolute;left: 0}
+.borrow-number_box1 .btm span,.borrow-number_box .btm span {top: -36px}
+.borrow-number_box1 .top,.borrow-number_box .top {background: #ff6000;border-bottom: 1px solid #ff7826;border-radius: 1px 1px 0 0;top: 0;-webkit-transform-origin: bottom;-ms-transform-origin: bottom;-moz-transform-origin: bottom;-o-transform-origin: bottom;transform-origin: bottom}
+.borrow-number_box1 .btm,.borrow-number_box .btm {background: #ff6000;border-top: 1px solid #ff7826;border-radius: 0 0 1px 1px;top: 36px;-webkit-transform-origin: top;-ms-transform-origin: top;-moz-transform-origin: top;-o-transform-origin: top;transform-origin: top}
+.borrow-number_box1 .top,.borrow-number_box1 .btm{background: #558000;border-bottom: 1px solid #659801;}
+.lianjie{ color:#f00; font-size:13px; padding-left:180px; }
+.lianjie a{ color:#f00; text-decoration:none;}
+</style>
+<p class="top-bg"></p>
+<div class="main_box">
+<div class="bbox1 clear" style="margin-top: 30px;">
+<div class="borrow-left">
+	<p>贷款成功</p>
+	<!--<p><span id="bsuccess">{$config.borrow_success|default=0}</span></p>-->
+    <div class="borrow-number_box1">
+	<volist name="barr1" id="vo" key="key">
+                 <div <if condition=" $key%3 eq 0 && $key%12 eq 0  ">class="unit add_f"
+                        <elseif condition=" $key%3 eq 0 "/>class="unit add_w"
+                        <else/>class="unit"
+                    </if> >
+                     <div class="top"><span>{$vo}</span></div>
+                     <div style="" class="top"><span>{$vo}</span></div>
+                     <div class="btm"><span>{$vo}</span></div>
+                     <div style="transform: rotateX(0deg);" class="btm"><span>{$vo}</span></div>
+                 </div>
+             </volist>
+	</div>
+</div>
+<div class="borrow-right">
+	<p>资金池</p>
+	<!--<p><span id="zjc">{$config.invest_money}</span></p>-->
+    <div class="borrow-number_box">
+	<volist name="barr2" id="vo" key="key">
+                 <div <if condition=" $key%3 eq 0 && $key%12 eq 0  ">class="unit add_f"
+                        <elseif condition=" $key%3 eq 0 "/>class="unit add_w"
+                        <else/>class="unit"
+                    </if> >
+                     <div class="top"><span>{$vo}</span></div>
+                     <div style="" class="top"><span>{$vo}</span></div>
+                     <div class="btm"><span>{$vo}</span></div>
+                     <div style="transform: rotateX(0deg);" class="btm"><span>{$vo}</span></div>
+                 </div>
+             </volist>
+	</div>
+</div>
+</div>
+<p style="height:30px;"></p>
+<div class="bbox2 clear">
+<div class="invest1 borrow-invest1">
+	<p class="borrow-p01">我要贷款</p>
+	<p class="borrow-p02">尊敬的 <i>{$member.user_name|default="游客"}</i> 您好，您当前的账户类型为 <span>{$agent_type[intval($member['user_levels'])][0]}</span> ，<if condition="$borrow_info['status'] egt 1">已经成功贷款一次。<else />您的贷款最高额度为 {$agent_type[intval($member['user_levels'])][1]} 元</if></p>
+	<div class="invest-form">
+		<switch name="borrow_info.status">
+		<case value="0">
+	<p style="margin-top:30px;">您于<span>&nbsp;{$borrow_info.applydate|date='Y-m-d H:i:s',###}&nbsp;</span>提交了贷款申请，</p>
+    <p>贷款金额为<span>&nbsp;{$borrow_info.money|intval}&nbsp;</span>元，该申请尚未批准。</p>
+	<p style="text-indent:0px;"><a class="button" href="javascript:chexiao({$borrow_info.bid})">撤销</a></p>
+		</case>
+		<case value="1|2|3">
+	<p style="margin-top:30px;">您于<span>&nbsp;{$borrow_info.applydate|date='Y-m-d H:i:s',###}&nbsp;</span>提交了贷款申请，</p>
+    <p>贷款金额为<span>&nbsp;{$borrow_info.money|intval}&nbsp;</span>元，该申请已经批准。</p>
+	<p>批准时间<span>&nbsp;{$borrow_info.allowdate|date='Y-m-d H:i:s',###}&nbsp; </span>本息总额 <?php echo($borrow_info['money']*1.2);?> 元</p>
+	<p style="text-indent:0px;"><a class="button" href="javascript:;">恭喜您</a></p>
+		</case>
+		<default />
+		<form id="borrow-form" action="{:U('Borrow/doBorrow')}" method="post" jump-url="__SELF__">
+		<ul>
+			<li><label>贷款金额&nbsp;</label><input type="text" name="money" autocomplete="off" onkeyup="zhuan(this)">&nbsp;<b>*贷款金额必须为100的倍数</b></li>
+			<li><label>利息预算&nbsp;</label>&nbsp;&nbsp;&nbsp;<span id="interest" style="color:red">0</span></li>
+			<li><label>支付密码&nbsp;</label><input type="password" name="password"></li>
+            <li>&nbsp;<input class="borrow-input" type="submit" value="提交"></li>
+		</ul>
+
+		</form>
+		</switch>
+	</div>
+</div>
+<div class="invest2" style="border:none;">
+	<div class="borrow-notic_top">
+	<p>当前账户已贷款金额<span>&nbsp; <egt name="borrow_info['status']" value="2">{$borrow_info.money|intval}<else />0</egt> &nbsp;</span>元，可用余额<span>&nbsp; <if condition="$borrow_info['status']==2 and $borrow_info['istransfer']==0">{$borrow_info.money|intval}<else />0</if> &nbsp;</span>元</p>
+	<if condition="$borrow_info['istransfer']"><button id="js-daili" class="button" href="javascript:;">已转入代理中心</button><else /><button id="js-daili" class="button" onclick="daili();">转入代理中心</button></if>
+    </div>
+    <ul class="borrow-notic">
+    	<li><p style="margin-top:5px; margin-bottom:10px;">
+             <span style="font-size: 18px;text-align: center;margin-top: 10px;color: #ff7700;font-weight: bold; padding-left:200px;">贷款规则</span>
+             <span class="lianjie"><a href="http://www.818money.net/Home/Art/details/id/327.html" target="new">了解详情>></a></span>
+            </p>
+        </li>
+    	<li><p>1.&nbsp;贷款资格：中级代理、高级代理、旗舰代理可以发起贷款请求，其他代理账户没有贷款权限。
+</p></li>
+        <li><p>2.&nbsp;贷款时间：账户注册30天内，可以发起贷款申请，超过30天之后不可贷款。</p></li>
+        <li><p>3.&nbsp;贷款用途：贷款成功后，点击"转入代理中心"，该金额即转入代理中心的创业基金。</p>
+            <p><span style="padding-left:70px;">&nbsp;</span>创业基金只可用于代理中心账户升级；不可转账、不可提现、不可退回。</p></li>
+        <li><p>4.&nbsp;还款方式：贷款成功之后，系统自动扣除每日大盘释放积分数额的60%，直至还款完毕。</p></li>
+        <li><p>5.&nbsp;贷款利息：贷款利息为固定20%，同本金一起在每日释放的积分中扣除。</p></li>
+    </ul>
+</div>
+</div>
+<p style="height:30px;"></p>
+<div class="bbox2 clear">
+
+<div class="borrow-l">
+<p>贷款申请列表</p>
+<div class="invest1">
+          <div class="record" style="overflow-x: hidden;max-height:587px;">
+            <table class="latest_list record_list" align="center" border="0" cellpadding="0" cellspacing="0">
+              <tbody id="coinorderlist">
+              <tr>
+              	<th>序号</th>
+            <th>提交时间</th>
+            <th>用户名</th>
+            <th>贷款金额</th>
+            <th>状态</th>
+              </tr>
+                <volist name='list1' id='vo'>
+                <tr>
+                <td class="list_con1">{$vo.bid}</td>
+                <td class="list_con1" style="color:#558000;">{$vo.applydate|date='Y-m-d H:i:s',###}</td>
+                <td class="list_con1" style="color:#558000;">{$vo.user_name|utf8Substr=0,2}***{$vl.user_name|utf8Substr=4,15}</td>
+                <td class="list_con1" style="color:#558000;">{$vo.money|intval}</td>
+                <td class="list_con1" style="color:#558000;">未批准</td>
+                </tr>
+                </volist>
+              </tbody>
+            </table>
+          </div>
+</div>
+</div>
+
+<div class="borrow-r">
+<p>已贷款列表</p>
+<div class="invest2">
+          <div class="record" style="overflow-x: hidden;max-height:287px;">
+            <table class="latest_list record_list" align="center" border="0" cellpadding="0" cellspacing="0">
+              <tbody id="coinorderlist2">
+              <tr>
+              	<th>序号</th>
+            <th>批准时间</th>
+            <th>用户名</th>
+            <th>贷款金额</th>
+            <th>应还总额</th>
+            <th>已还金额</th>
+            <th>余欠</th>
+              </tr>
+                <volist name='list2' id='vo'>
+                <tr>
+                	<td class="list_con1">{$vo.bid}</td>
+                  <td class="list_con1" style="color:#ff7700;">{$vo.allowdate|date='Y-m-d',###}</td>
+                  <td class="list_con1" style="color:#ff7700;">{$vo.user_name|utf8Substr=0,2}***{$vl.user_name|utf8Substr=4,15}</td>
+                  <td class="list_con1" style="color:#ff7700;">{$vo.money|intval}</td>
+                  <td class="list_con1" style="color:#ff7700;"><?php echo(intval($vo['money']*1.2));?></td>
+                  <td class="list_con1" style="color:#ff7700;">{$vo.paymoney|round=2}</td>
+                  <td class="list_con1" style="color:#ff7700;">{:round(($vo['money']*1.2-$vo['paymoney']),2)}</td>
+                </tr>
+                </volist>
+              </tbody>
+            </table>
+          </div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+$("#borrow-form").validate({
+    rules: {
+    },
+    messages: {
+    },
+    submitHandler:function(form){
+        ajax_submit_form(form)
+        return false;
+    },
+    invalidHandler: function() {  //不通过回调
+        return false;
+    }
+});
+function zhuan(obj){
+	var s = parseInt(obj.value);
+	obj.value = isNaN(s)?0:s;
+	$('#interest').html(obj.value*0.2);
+}
+function chexiao(_this){
+		layer.confirm('确定撤销贷款？', {
+	  btn: ['确定','取消'], //按钮
+	  title: '撤销贷款'
+	}, function(){
+	  $.post('{:U('Borrow/cancel')}',{bid:_this},function(data){
+				   if(data['status'] == 1){
+					   layer.msg(data['info']);
+					   setTimeout(function(){location.reload();},1000);
+				   }else{
+					   layer.msg(data['info']);
+				   }
+			})
+	}, function(){
+	  layer.msg('已取消');
+	});
+
+	}
+
+function daili(){
+		layer.confirm('确定转入代理中心？', {
+	  btn: ['确定','取消'], //按钮
+	  title: '转入代理中心'
+	}, function(){
+    $('#js-daili').attr('disabled',true).html('数据中处理...');
+	  $.post('{:U('Borrow/zhuan')}',{},function(data){
+          $('#js-daili').attr('disabled',false).html('转入代理中心');
+				   if(data['status'] == 1){
+					   layer.msg(data['info']);
+					   setTimeout(function(){location.reload();},1000);
+				   }else{
+					   layer.msg(data['info']);
+				   }
+			})
+	}, function(){
+	  layer.msg('已取消');
+	});
+
+	}
+setInterval(function(){
+	$.post("{:U('Borrow/deal')}",'',function(re){
+		var data = re.data;
+		var length=parseInt(data.length)
+		if(length){
+			for(var i=0;i<length;i++){
+				$('#coinorderlist2').append('<tr><td class="list_con1">'+data[i]['bid']+'</td><td class="list_con1">'+data[i]['allowdate']+'</td><td class="list_con1">'+data[i]['user_name']+'</td><td class="list_con1">'+data[i]['money']+'</td><td class="list_con1">'+data[i]['yinghuan']+'</td><td class="list_con1">'+data[i]['paymoney']+'</td><td class="list_con1">'+data[i]['leaf']+'</td></tr>');
+			}
+		}
+		$('#zjc').html(re['invest_money']);
+		$('#bsuccess').html(re['borrow_success']);
+	});
+},10000)
+</script>
+<include file="App/Home/View/Public/footer.html"/>

@@ -1,0 +1,119 @@
+ <include file="App/Home/View/Public/header.html"/>
+ <style>
+ .pass_ybc{ min-height:400px !important;}
+ .my_add{ margin-bottom:0px !important;}
+ </style>
+<div id="main">
+  <div class="main_box">
+  <include file="App/Home/View/Public/left.html"/>
+<!-- content start -->
+<div class="raise right clearfix" style="width:940px; padding:20px; background:#fff;">
+<div class="ybc_list">
+        <div class="ybcoin">
+          <h2 class="left">alps币转到商城</h2>
+          <div class="clear"></div>
+        </div>
+      </div>
+
+<h2 class="choose_one">输入要提款的数量<span>(可用：<strong>{$num}</strong>)</span><span style="float:right;margin-right:20px;"><strong id="rmbout_showtips"></strong></span></h2>
+
+<form action="{:U('User/doAlps')}" method="post" id="drawform" jump-url="{:U('User/alps')}">
+<table class="my_add" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="position:relative; padding-left:90px;">转出数量
+        <input class="sum" name="money" id="money"  autocomplete="off" type="text" onkeyup="value=value.replace(/[^\d]/g,'');sjdz();"><font color="red">今日平均市价：￥{$radio}</font>
+        </td>
+      <td>实际到帐
+        <input class="sum" id="true_daozhang" disabled="disabled" type="text">
+      </td>
+
+
+    </tr>
+    <tr>
+      <td style=" padding-left:90px;">交易密码
+        <input style="display:none" type="password">
+        <!-- for disable autocomplete on chrome -->
+        <input class="sum" name="pwdtrade" id="pwdtrade" autocomplete="off" type="password"></td>
+        <input type="hidden" name="platform" value="alpsemall" />
+        <td><input style=" float:right; margin-right:103px;" class="confirm"  value="确认提交" type="submit"></td>
+    </tr>
+  </tbody>
+</table>
+</form>
+<div class="ybc_list">
+        <div class="ybcoin">
+          <h2 class="left">转出记录</h2>
+          <div class="clear"></div>
+        </div>
+        <table class="raise_list" style="border:1px solid #e1e1df;" align="center" border="0" cellpadding="0" cellspacing="0">
+          <thead>
+            <tr>
+              <th>记录ID</th>
+              <th>数量</th>
+              <th>实际到账</th>
+              <th>类型</th>
+              <th>平台</th>
+              <th>操作时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <volist name="alps_info" id="vo">
+            <tr id="btc_box" class="btc_new" >
+              <td id="btc_id">{$vo.id}</td>
+              <td id="btc_number">{$vo.amount}</td>
+              <td id="btc_fee">{$vo.money}</td>
+              <td><if condition="$vo['type'] eq 1">出币<else />入币</if></td>
+              <td><if condition="$vo['platform'] eq 'alpsemall'">alpsemall商城<else />外汇平台</if></td>
+              <td id="btc_created">{$vo.addtime|date='Y-m-d H:i:s',###}</td>
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </div>
+</div>
+<!-- content end -->
+  </div>
+  <div class="clear"></div>
+</div>
+<script type="text/javascript">
+  $(".menu16").addClass("uc-current");
+  function sjdz(){
+        var radio = {$radio};
+        var m ;
+
+          m = $("#money").val()*radio;
+
+        $("#true_daozhang").val(m);
+      }
+  $("#drawform").validate({
+        rules: {
+          money:{
+            required: true,
+            //min: 100,
+            //max: 50000,
+            },
+          pwdtrade:"required",
+          //code:"required",
+        },
+        messages: {
+          money:{
+            required: "请填写提现金额",
+            //min: "提现金额最小100",
+            //max: "提现金额最大50000",
+            },
+
+          pwdtrade:"请填写交易密码",
+          //code:"请填写验证码",
+        },
+        submitHandler:function(form){
+          ajax_submit_form(form)
+          return false;
+        },
+        invalidHandler: function() {  //不通过回调
+          return false;
+        }
+      });
+</script>
+<!--footer start-->
+<include file="App/Home/View/Public/footer.html"/>

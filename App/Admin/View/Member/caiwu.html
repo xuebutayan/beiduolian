@@ -1,0 +1,78 @@
+    <include file="App/Admin/View/Public/left.html"/>
+    <!--/sidebar-->
+    <div class="main-wrap">
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="{:U('Index/index')}">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">会员财务统计</span></div>
+        </div>
+        <div class="search-wrap">
+<script type="text/javascript">
+    function show_caiwu(num){
+        $
+    }
+</script>
+            <div class="search-content">
+                <form action="{:U('Member/caiwu')}" method="post">
+                    <table class="search-tab">
+                        <tr>
+                        <td width="70">用户名:</td>
+                            <td><input class="common-text" placeholder="关键字" name="user_name" type="text"></td>
+                            <td width="70">会员email:</td>
+                            <td><input class="common-text" placeholder="关键字" name="email" type="text"></td>
+                              <td width="70">会员ID:</td>
+                            <td><input class="common-text" placeholder="ID" name="member_id" type="text"></td>
+                            <td width="70">代理编号:</td>
+                            <td><input class="common-text" placeholder="关键字" name="user_code" type="text"></td>
+                            <td><input class="btn btn-primary btn2"  value="查询" type="submit"></td>
+
+                        </tr>
+                    </table>
+                </form>
+每页显示<input class="common-text" name="pagesize" type="text" onkeyup="value=value.replace(/[^\d]/g,'');" onblur="window.location.href='{:U('Member/caiwu')}'+'?page_size='+this.value">个 <a href="__SELF__?export=1">导出当前页</a>
+            </div>
+        </div>
+        <div class="result-wrap">
+
+
+            <div class="result-content">
+                <table class="result-tab" width="100%">
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>用户级别</th>
+                        <th>积分发放/次</th>
+						<th>每日积分释放数</th>
+                        <th width="70">ALPS币</th>
+                        <th>已提现额度-触发额度</th>
+                    </tr>
+                    <volist name='list' id='vo'>
+                        <tr>
+                            <td>{$vo['member_id']} [uid:{$vo.user_id}]</td>
+                            <td><if condition="$vo['user_id']"><font color="#f00"><b>{$vo['user_name']}</b></font><else />{$vo['user_name']}</if></td>
+                            <td><eq name="vo['user_levels']" value="0">无代理</eq>
+                            <eq name="vo['user_levels']" value="1">基础代理</eq>
+                            <eq name="vo['user_levels']" value="2">中级代理</eq>
+                            <eq name="vo['user_levels']" value="3">高级代理</eq>
+                            <eq name="vo['user_levels']" value="4">旗舰代理</eq>
+                            <eq name="vo['user_levels']" value="5">战略代理</eq>
+                            </td>
+                            <td>{$vo['send_times']|default="暂无"}</td>
+							<td>{$vo['user_id']|check_jifen}</td>
+                            <td>{$vo['cnum']|default=0}</td>
+                            <td>{$vo['member_id']|getMoney=###,$vo['user_levels']}</td>
+                        </tr>
+                    </volist>
+
+                </table>
+                <div class="list-page"> <ul>{$page}</ul></div>
+            </div>
+
+        </div>
+    </div>
+    <!--/main-->
+</div>
+</body>
+</html>
+<script>
+$(".sub-menu").eq(3).show();
+$(".sub-menu").eq(3).children("li").eq(6).addClass("on");
+</script>

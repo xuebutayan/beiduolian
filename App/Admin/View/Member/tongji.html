@@ -1,0 +1,103 @@
+    <include file="App/Admin/View/Public/left.html"/>
+    <!--/sidebar-->
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="{:U('Index/index')}">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">会员管理</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+                <form action="{:U('Member/tongji')}" method="post">
+                    <table class="search-tab">
+                        <tr>
+                        <td width="70">用户名:</td>
+                            <td><input class="common-text" placeholder="关键字" name="user_name" type="text"></td>
+                              <td width="70">会员ID:</td>
+                            <td><input class="common-text" placeholder="ID" name="member_id" type="text"></td>
+                            <td><input class="btn btn-primary btn2"  value="查询" type="submit"></td>
+                        </tr>
+                    </table>
+                </form>
+<form action="{:U('Member/tongji')}" method="get">
+        <input type="text" name="member_id" placeholder="填写会员id" onkeyup="value=value.replace(/[^\d]/g,'');">
+        <input type="hidden" name="export" value='1'>
+        导出指定会员ID的EXCEL表<input class="btn btn-primary btn2"  value="确定" type="submit">
+        </form>
+            </div>
+        </div>
+        <div class="result-wrap">
+
+            <div class="result-title">
+                <div class="result-list">
+                    <a href="{:U('Member/addMember')}"><i class="icon-font"></i>新增会员</a>
+                </div>
+            </div>
+            <div class="result-content">
+                <table class="result-tab" width="100%">
+                    <tr>
+                        <th>用户名</th>
+                        <th>日期</th>
+                        <th>充值积分</th>
+                        <th>释放积分</th>
+                        <th>还贷积分</th>
+                        <th>转入积分</th>
+                        <th>昨日积分</th>
+                        <th>可用积分</th>
+                        <th>买币挂单</th>
+                        <th>买币统计</th>
+                        <th>积分余额</th>
+                        <th>昨日ALPS</th>
+                        <th>充值ALPS</th>
+                        <th>可卖ALPS</th>
+                        <th>卖币挂单</th>
+                        <th>卖币统计</th>
+                        <th>ALPS余额</th>
+
+                        <th>昨日人民币</th>
+                        <th>充值人民币</th>
+                        <th>可用人民币</th>
+                        <th>提现</th>
+                        <th>提后余额</th>
+                    </tr>
+                    <volist name='list' id='vo'>
+                        <tr>
+                            <td>[id:{$vo.member_id}]{$vo['user_name']|default='暂无'}</td>
+                            <td>{$vo['datetime']|date='Y-m-d',###}</td>
+                            <td>{$vo['czjf']}</td>
+                            <td>{$vo['sfjf']}</td>
+                            <td>{$vo['hdjf']}</td>
+                            <td>{$vo['zrjf']}</td>
+                            <td>{$vo['ztjf']}</td>
+                            <td>{$vo['czjf']+$vo['sfjf']+$vo['zrjf']+$vo['ztjf']-$vo['hdjf']}</td>
+                            <td>{$vo['mbgd']}</td>
+                            <td>使用{$vo['mbjf']}积分<br>购买{$vo['mbsl']}币</td>
+                            <td>{$vo['czjf']+$vo['sfjf']+$vo['zrjf']+$vo['ztjf']-$vo['hdjf']-$vo['mbjf']}</td>
+                            <td>{$vo['zr_alps']}</td>
+                            <td>{$vo['cz_alps']}</td>
+                            <td>{$vo['km_alps']}</td>
+                            <td>{$vo['nbgd']}</td>
+                            <td>卖币{$vo['nbsl']}<br>金额{$vo['nbje']}</td>
+                            <td>{$vo['ye_alps']}</td>
+
+                            <td>{$vo['zr_rmb']}</td>
+                            <td>{$vo['cz_rmb']}</td>
+                            <td>{$vo['kt_rmb']}</td>
+                            <td>{$vo['tx_rmb']}</td>
+                            <td>{$vo['th_rmb']}</td>
+                        </tr>
+                    </volist>
+
+                </table>
+                <div class="list-page"> <ul>{$page}</ul></div>
+            </div>
+
+        </div>
+    </div>
+    <!--/main-->
+</div>
+</body>
+</html>
+<script>
+$(".sub-menu").eq(3).show();
+$(".sub-menu").eq(3).children("li").eq(7).addClass("on");
+</script>

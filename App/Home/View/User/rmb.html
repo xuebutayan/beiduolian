@@ -1,0 +1,147 @@
+ <include file="App/Home/View/Public/header.html"/>
+ <style>
+ .pass_ybc{ min-height:400px !important;}
+ .my_add{ margin-bottom:0px !important; font-size:14px;}
+ .whtop{width:940px; padding:15px; background:#fff;}
+ .whmid{ padding:15px; background:#fff;margin-top:15px;}
+ .whnote{ font-size:14px; color:#666; height:25px; line-height:25px;}
+ .my_add tr td{ border-bottom:none;}
+ </style>
+<div id="main">
+  <div class="main_box">
+  <include file="App/Home/View/Public/left.html"/>
+<!-- content start -->
+<div class="raise right clearfix" style="width:970px; ">
+<!--上部分-->
+<div class="ybc_list whtop">
+        <div class="ybcoin">
+          <h2 class="left" > <img src="/Public/Home/images/dian.png" style="width:8px; height:8px; margin-right:10px;">人民币转到GLT通兑金</h2>
+          <div class="clear"></div>
+        </div>
+        <div class="whnote">转出说明	:</div>
+        <div class="whnote">1. 转出是手动的，转账需要整个阿尔卑斯网络进行确认，达到3个确认后您的alps会自动充值到您的GLT通兑金</div>
+        <div class="whnote">2. 此地址您的唯一且独自使用的转入地址，您可以同时进行多次转出</div>
+</div>
+<!--中间部分-->
+
+
+<div style="width: 970px; overflow: hidden; background-color: white;">
+	<div style="float: left; width: 450px;height: 420px; background-color: white;">
+	<div class="whmid">
+
+<form action="{:U('User/doRmb')}" method="post" id="drawform" jump-url="{:U('User/rmb')}">
+<table class="my_add" border="0" cellpadding="0" cellspacing="0">
+  <tbody>
+    <tr>
+      <td style="position:relative; padding-left:103px;">可用人民币：<font color="#f18520"><strong>{$num}</strong></font></td>
+    </tr>
+    <tr>
+      <td style="position:relative; padding-left:103px;">通兑金数量:
+        <input class="sum" name="money" id="money"  autocomplete="off" type="text" onkeyup="value=value.replace(/[^\d]/g,'');sjdz();">$
+        </td>
+     </tr>
+    <tr>
+      <td style="position:relative; padding-left:102px;">折合人民币:
+        <input class="sum" id="true_daozhang2" disabled="disabled" type="text">￥<font color="red" style="margin-left:10px;">汇率 1:{$utr}</font>
+      </td>
+    </tr>
+
+    <tr>
+      <td style="position:relative; padding-left:107px;">交易密码：
+        <input style="display:none" type="password">
+        <!-- for disable autocomplete on chrome -->
+        <input class="sum" name="pwdtrade" id="pwdtrade" autocomplete="off" type="password"></td>
+        </tr>
+        <tr>
+        <td style="position:relative; padding-left:165px;"><input class="confirm"  value="确认提交" type="submit"></td>
+    </tr>
+
+  </tbody>
+</table>
+</form>
+</div>
+<script type="text/javascript">
+  function sjdz(){
+        var utr = {$utr};
+        var m ;
+
+        m = $("#money").val()*utr;
+        //$("#true_daozhang1").val($("#money").val()*0.9);
+        $("#true_daozhang2").val($("#money").val()*utr);
+      }
+  $("#drawform").validate({
+        rules: {
+          money:{
+            required: true,
+            //min: 100,
+            //max: 50000,
+            },
+          pwdtrade:"required",
+          //code:"required",
+        },
+        messages: {
+          money:{
+            required: "请填写交易金额",
+            //min: "提现金额最小100",
+            //max: "提现金额最大50000",
+            },
+
+          pwdtrade:"请填写交易密码",
+          //code:"请填写验证码",
+        },
+        submitHandler:function(form){
+          $('input.confirm').attr('disabled',true);
+          ajax_submit_form(form);
+          return false;
+        },
+        invalidHandler: function() {  //不通过回调
+          return false;
+        }
+      });
+</script>
+</div>
+
+</div>
+
+
+<!--下部分-->
+<div class="ybc_list whmid">
+        <div class="ybcoin">
+          <h2 class="left"> <img src="/Public/Home/images/dian.png" style="width:8px; height:8px; margin-right:10px;">转出记录</h2>
+          <div class="clear"></div>
+        </div>
+        <table class="raise_list" style="border:1px solid #e1e1df;" align="center" border="1" cellpadding="0" cellspacing="0">
+          <thead>
+            <tr>
+              <th style="background:#f8f8f8; ">记录ID</th>
+              <th style="background:#e8f2da; ">人民币</th>
+              <th style="background:#f2f2da; ">实际到账</th>
+              <th style="background:#e5f2e7; ">类型</th>
+              <th style="background:#f2f2da; ">平台</th>
+              <th style="background:#f8f8f8; ">操作时间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <volist name="alps_info" id="vo">
+            <tr id="btc_box" class="btc_new" >
+              <td id="btc_id">{$vo.id}</td>
+              <td id="btc_number">{$vo.rmb}</td>
+              <td id="btc_fee">{:round($vo['money'],2)}通兑金</td>
+              <td>出币</td>
+              <td>GLT股东中心</td>
+              <td id="btc_created">{$vo.addtime|date='Y-m-d H:i:s',###}</td>
+            </tr>
+            </volist>
+          </tbody>
+        </table>
+      </div>
+</div>
+<!-- content end -->
+  </div>
+  <div class="clear"></div>
+</div>
+<script type="text/javascript">
+  $(".menu17").addClass("uc-current");
+</script>
+<!--footer start-->
+<include file="App/Home/View/Public/footer.html"/>

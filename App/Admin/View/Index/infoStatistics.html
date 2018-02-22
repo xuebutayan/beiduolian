@@ -1,0 +1,192 @@
+<include file="App/Admin/View/Public/left.html"/>
+<!--/sidebar-->
+<div class="main-wrap">
+    <div class="crumb-wrap">
+        <div class="crumb-list"><i class="icon-font"></i><a href="{:U('Index/index')}">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">全站统计信息</span></div>
+    </div>
+    <div class="result-wrap">
+        <div class="result-content">
+        </div>
+    </div>
+    <div class="result-wrap">
+        <div class="result-title">
+            <h1>全站统计信息</h1>
+        </div>
+        <div class="result-content">
+            <table class="result-tab" width="100%">
+                <tr>
+                    <td>会员总人数</td>
+                    <td>{$member|default='0'}人</td>
+                    <td>众筹总数量</td>
+                    <td>{$issue_count['count']|default='0'}</td>
+                </tr>
+                <tr>
+                    <td>人民币收入</td>
+                    <td>￥{$pay_money_count|default='0'|floatval=###}</td>
+                    <td>人民币支出</td>
+                    <td>￥{$withdraw_money_count|default='0'|floatval=###}</td>
+                </tr>
+                <tr>
+                    <td>充值单数</td>
+                    <td>{$pay_count|default='0'}单</td>
+                    <td>提现单数</td>
+                    <td>{$withdraw_count|default='0'}单</td>
+                </tr>
+                <tr>
+                    <td>积分总数</td>
+                    <td>{$jifen|default='0'}</td>
+                    <td>应释放数</td>
+                    <td>{$true_jifen|default='0'}</td>
+                </tr>
+            </table>
+            <div class="result-title">
+                <h1>全站币种统计</h1>
+            </div>
+            <table class="result-tab" width="70%" style="text-align: center;margin-left: 130px;">
+                <tr>
+                    <td>币种名</td>
+                    <td>可用</td>
+                    <td>冻结</td>
+                    <td>总数</td>
+                </tr>
+                <volist name="currency_u_info" id="vo">
+                    <tr>
+                        <td>{$vo['currency_name']}</td>
+                        <td>{$vo['num']|floatval=###}</td>
+                        <td>{$vo['forzen_num']|floatval=###}</td>
+                        <td>{$vo['num']+$vo['forzen_num']|floatval=###}</td>
+                    </tr>
+                </volist>
+
+            </table>
+
+        </div>
+        <!-- <div class="result-title">
+            <h1>会员数据统计</h1>
+        </div>
+        <div class="result-content">
+        <p>已生成到{$tongji_time|date='Y-m-d',###}数据，<a href="{:U('Index/doTongji')}" target="_blank">执行继续生成数据</a></p>
+        </div>
+        <div class="result-title">
+            <h1>会员处理</h1>
+        </div>
+        <div class="result-content">
+        <p>alps编号数量：{$alps_num} , <a href="javascript:create_code(1)">批量补发alps编号</a></p>
+        </div> -->
+        <div class="result-title">
+            <h1>积分计划任务</h1>
+        </div>
+        <div class="result-content">
+        <p>今日应发放 {$baodan_count} 人,已发放 {$baowan} 人 <a target="_blank" href="{:U('Index/baowan?detail=1')}">详情</a> , <a target="_blank" href="{:U('Index/bubao')}">执行补充发放</a><!-- ,<a href="{:U('Index/reset')}">重置发放</a> --></p>
+        <br>
+            <if condition="F('mission')">今日已执行发放<else /><a href="javascript:collect(1)">执行任务</a></if>
+            <br />
+            <br>
+            <!-- 起始ID:<input size="10" type="text" id='qujian1' onkeyup="value=value.replace(/[^\d]/g,'');"><br>
+            结束ID:<input size="10" type="text" id='qujian2' onkeyup="value=value.replace(/[^\d]/g,'');"><br>
+            <a href="javascript:;" onclick="collectq(1)">代理ID区间释放</a> -->
+
+        </div>
+    </div>
+    <script>
+        $(function(){
+            $('#button').click(function(){
+                if(confirm("确认要清除缓存？")){
+                    var $type=$('#type').val();
+                    $.post("{:U('Index/cache')}",{type:$type},function(data){
+                        alert("缓存清理成功");
+                    });
+                }else{
+                    return false;
+                }});
+        });
+    </script>
+</div>
+<!--/main-->
+</div>
+</body>
+</html>
+<script>
+$(".sub-menu").eq(2).show();
+$(".sub-menu").eq(2).children("li").eq(2).addClass("on");
+//提示测试
+var url = "{:U('Index/doJifen')}";
+var code_url = "{:U('Index/doCreateCode')}";
+var id = 0;
+var p = 1;
+function collect(p){
+    $.getJSON(url, {p:p}, function(result){
+        if(result.status == 1){
+            layer.msg(result.info,{id:'msg',shade:0.3});
+            p++;
+            setTimeout("collect_page("+ p +")",1000);
+        }else{
+            alert(result.info);
+        }
+    });
+}
+function collect_page(p){
+    $.getJSON(url, {p:p}, function(result){
+        if(result.status == 1){
+            var index = layer.msg(result.info,{id:'msg',shade:0.3});
+            p++;
+            setTimeout("collect_page("+ p +")",1000);
+        }else{
+            layer.close(index);
+            alert(result.info);
+            window.location.reload();
+        }
+    });
+}
+function collectq(p){
+    var x = $('#qujian1').val();
+    var y = $('#qujian2').val();
+    //alert(v);
+    $.getJSON(url, {p:p,x:x,y:y}, function(result){
+        if(result.status == 1){
+            layer.msg(result.info,{id:'msg',shade:0.3});
+            p++;
+            setTimeout("collectq_page("+ p +","+ x +","+y+")",1000);
+        }else{
+            alert(result.info);
+        }
+    });
+}
+function collectq_page(p,x,y){
+    $.getJSON(url, {p:p,x:x,y:y}, function(result){
+        if(result.status == 1){
+            var index = layer.msg(result.info,{id:'msg',shade:0.3});
+            p++;
+            setTimeout("collectq_page("+ p +","+ x +","+y+")",1000);
+        }else{
+            layer.close(index);
+            alert(result.info);
+            window.location.reload();
+        }
+    });
+}
+function create_code(p){
+    $.getJSON(code_url, {p:p}, function(result){
+        if(result.status == 1){
+            layer.msg(result.info,{id:'msg',shade:0.3});
+            p++;
+            setTimeout("do_create_code("+ p +")",1000);
+        }else{
+            alert(result.info);
+        }
+    });
+}
+function do_create_code(p){
+    $.getJSON(code_url, {p:p}, function(result){
+        if(result.status == 1){
+            var index = layer.msg(result.info,{id:'msg',shade:0.3});
+            p++;
+            setTimeout("do_create_code("+ p +")",1000);
+        }else{
+            layer.close(index);
+            alert(result.info);
+            window.location.reload();
+        }
+    });
+}
+</script>

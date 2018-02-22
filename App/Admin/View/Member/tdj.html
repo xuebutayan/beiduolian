@@ -1,0 +1,65 @@
+    <include file="App/Admin/View/Public/left.html"/>
+    <!--/sidebar-->
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="{:U('Index/index')}">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">会员管理</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+                <form action="{:U('Member/tdj')}" method="get">
+                    <table class="search-tab">
+                        <tr>
+                            <td width="70">会员ID:</td>
+                            <td><input class="common-text" placeholder="ID" name="member_id" type="text"></td>
+                            <td width="70">代理编号:</td>
+                            <td><input class="common-text" placeholder="关键字" name="user_code" type="text"></td>
+                            <td width="70">开始时间:</td>
+                            <td><input class="common-text" placeholder="格式:2017-08-17 18:30:00" name="start_time" type="text"></td>
+                            <td width="70">结束时间:</td>
+                            <td><input class="common-text" placeholder="格式:2017-08-17 18:30:00" name="end_time" type="text"></td>
+                            <td><input class="btn btn-primary btn2"  value="查询" type="submit"></td>
+                        </tr>
+                    </table>
+                </form>
+
+            </div>
+        </div>
+        <div class="result-wrap">
+            <div class="result-content">
+                <table class="result-tab" width="100%">
+                    <tr>
+                        <th>ID</th>
+                        <th>代理编号</th>
+                        <th>代理用户名</th>
+                        <th>alps币数量</th>
+                        <th>所需美元数</th>
+                        <th>提交时间</th>
+                        <th>状态</th>
+                    </tr>
+                    <volist name='list' id='vo'>
+                        <tr>
+                            <td>{$vo['member_id']}</td>
+                            <td>{$vo['user_code']|default="暂无"}</td>
+                            <td>{$vo['user_name']|default="暂无"}</td>
+                            <td>{$vo['amount']}</td>
+                            <td>{$vo['money']}</td>
+                            <td>{$vo['addtime']|date='Y-m-d H:i:s',###}</td>
+                            <td><eq name="vo['type']" value="1">出币<else />入币</eq></td>
+                        </tr>
+                    </volist>
+
+                </table>
+                <div class="list-page"> <ul>{$page}</ul></div>
+            </div>
+
+        </div>
+    </div>
+    <!--/main-->
+</div>
+</body>
+</html>
+<script>
+$(".sub-menu").eq(3).show();
+$(".sub-menu").eq(3).children("li").eq(8).addClass("on");
+</script>

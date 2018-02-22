@@ -1,0 +1,28 @@
+     <include file="App/Admin/View/Public/left.html"/>
+    <!--/sidebar-->
+    <div class="main-wrap">
+
+        <div class="crumb-wrap">
+            <div class="crumb-list"><i class="icon-font"></i><a href="{:U('Index/index')}">首页</a><span class="crumb-step">&gt;</span><span class="crumb-name">积分任务</span></div>
+        </div>
+        <div class="search-wrap">
+            <div class="search-content">
+
+
+            </div>
+        </div>
+        <div class="result-wrap">
+            <div class="result-content">
+                <a href="{:U('Index/doJifen')}">执行任务</a>
+            </div>
+
+        </div>
+    </div>
+    <!--/main-->
+</div>
+</body>
+</html>
+<script>
+$(".sub-menu").eq(2).show();
+$(".sub-menu").eq(2).children("li").eq(1).addClass("on");
+</script>

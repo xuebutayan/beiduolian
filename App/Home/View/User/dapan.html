@@ -1,0 +1,79 @@
+<include file="App/Home/View/Public/header.html"/>
+<style>
+.filtrate{
+border: 1px solid #e55600;
+color:#e55600;
+border-radius: 3px;
+width: 60px;
+height: 28px;
+margin: 5px;
+cursor: pointer;
+}
+.filtrate:hover{
+border: 1px solid #e55600;
+border-radius: 3px;
+width: 60px;
+height: 28px;
+margin: 5px;
+cursor: pointer;
+color:#FFF;
+background-color:#e55600;
+}
+</style>
+    <!--top end-->
+<div id="main">
+	<div class="main_box">
+		<include file="App/Home/View/Public/left.html"/>
+		<div class="raise right clearfix" style="width:940px; padding:20px; background:#fff;">
+            <div class="ybc_list">
+	<div class="ybcoin clearfix">
+		<h2 class="left">释放积分明细</h2>
+		<!-- <div class="right" style="margin-top:7px;">
+			<form action="{:U('Trade/mydeal')}" method="post">
+                <select id="coninname" name="currency">
+                    <volist name="culist" id="vo">
+                    <option value="{$vo['currency_id']|default=""}">{$vo['currency_id']|getCurrencynameByCurrency=###}对{$vo['trade_currency_id']|getCurrencynameByCurrency=###}</option>
+                    </volist>
+                </select>
+                <input value="提交" class="filtrate" type="submit">
+			</form>
+		</div> -->
+	</div>
+		<table class="raise_list" style="border:1px solid #e1e1df;" id="Transaction" align="center" border="0" cellpadding="0" cellspacing="0">
+			<thead>
+			<tr>
+                <th>序号</th>
+				<th>日期</th>
+				<th>积分总额</th>
+				<th>每天释放</th>
+				<th>已释放次数</th>
+				<th>已释放金额</th>
+			</tr>
+			</thead>
+			<tbody>
+			<foreach name="list" item="vo">
+					<tr style="border:1px solid #ccc;">
+                        <td>{$count-10*$pv-$key}</td>
+						<td>{$vo.posttime|date='Y-m-d H:i:s',###}</td>
+						<td>{$vo.integral}</td>
+						<td>{:0.005*$vo['integral']}</td>
+						<td>{:200-$vo["remain_days"]}</td>
+						<td>{:0.005*$vo['integral']*(200-$vo['remain_days'])}</td>
+						</tr>
+				</foreach><!--  -->
+			</tbody>
+		</table>
+	</div>
+        <div class="page" style=" min-width:200px !important; float:right;">
+                    {$page}
+              </div>
+		</div>
+		<div class="clear"></div>
+	</div>
+</div>
+<script type="text/javascript">
+$(".menu15").addClass("uc-current");
+</script>
+<!--footer start-->
+<include file="App/Home/View/Public/footer.html"/>
+<!--footer end-->

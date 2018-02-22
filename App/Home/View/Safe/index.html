@@ -1,0 +1,211 @@
+<include file="App/Home/View/Public/header.html"/>
+<!--top end-->
+<link rel="shortcut icon" href="http://www.jubi.com/favicon.ico" type="image/x-icon">
+<script src="_PUBLIC__/Home/js/script.js"></script>
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/Home/css/jb_font-awesome.css">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+</head>
+
+<body>
+<div id="main">
+    <div class="main_box">
+        <include file="App/Home/View/Public/left.html"/>
+
+        <div class="assets_content w753 right bg_w" id="safebox" style=" border-left-style:none !important;background:none;">
+            <div class="safe_center clear" style="padding-left:0;margin-top:1px;">
+              <div style="float:left;">
+
+                <dl style="width:275px;padding: 20px;height:118px;display:inline-block;background:#fff;margin-right:5px;margin-bottom:5px;">
+                    <!--<span style="font-size:16px;">用户信息</span>
+                    <dt>ID：<span>{$u_info['member_id']}</span></dt>-->
+
+                    <dd style="color:#f18520;font-size:14px;">您好：{$u_info['name']}</dd>
+                    <dd style="color:#333333;font-size:14px;" >用户名：{$u_info['user_name']|default='暂无'}</dd>
+                    <dd style="color:#333333;font-size:14px;">邮箱：{$u_info['email']}</dd>
+                    <dd style="color:#333333;font-size:14px;">大盘编号：<if condition="$u_info['alps_code']">{$u_info['alps_code']}<else /><a href="{:U('Safe/generate_code')}">生成编号</a></if></dd>
+                    <dd style="color:#333333;font-size:14px;">代理编号：{$u_info['user_code']|default="暂无"}</dd>
+                </dl>
+              </div>
+              <style>
+              dl.top_01{width:275px;padding: 20px;padding-top: 10px;height:128px;display:inline-block;background:#fff;margin-right:5px;margin-bottom:5px;}
+			  dl.top_01 span.top_01{font-size:16px;display: block;text-align: center;border-bottom: 1px solid #eaeaea;line-height: 35px;margin-bottom: 5px;}
+			  div.ziliao{float:left;width:955px;line-height:45px;font-size:16px;background:#fff;margin-bottom:5px;margin-top:15px;}
+              </style>
+              <div style="float:left;">
+                <dl class="top_01">
+                    <span class="top_01">ALPS MT4</span>
+
+                    <dd style="color:#333333;" >储备金：{$u_info['alps_mt4']}个</dd>
+                    <if condition="$u_info['login']"><dd style="color:#333333;">A仓帐户：{$u_info['login']}</dd></if>
+                    <dd style="color:#333333;" >A仓资金：{$chubi}美元</dd>
+                </dl>
+              </div>
+              <div style="float:left;">
+                <dl class="top_01">
+                    <span class="top_01">J2T MT4</span>
+
+                    <dd style="color:#333333;" >储备金：${$u_info['huge_mt4']}美元</dd>
+                    <dd style="color:#333333;">B仓账户1：{$code[0]|default='暂无'}</dd>
+                    <dd style="color:#333333;">B仓账户2：{$code[1]|default='暂无'}</dd>
+                </dl>
+              </div>
+              <div class="ziliao"><img src="/Public/Home/images/dian.png" style="margin-left:20px;width:8px; height:8px; margin-right:10px;"><a class="current">个人资料
+                </a></div>
+              <div style="float:left;">
+                <dl class="top_01"><span class="top_01">人民币信息</span>
+                    <dt>可用：￥{$u_info['rmb']|floatval=###}</span></dt>
+                    <dd>冻结：￥{$u_info['forzen_rmb']|floatval=###}</dd>
+                    <dd>总资产：￥{$u_info['rmb']+$u_info['forzen_rmb']|floatval=###}</dd>
+                    <!--<dd>J2T MT4:${$u_info['huge_mt4']} 美元</dd>
+                    <dd>ALPS MT4:{$u_info['alps_mt4']} 个</dd>-->
+                </dl>
+              </div>
+              <div style="float:left;">
+                <dl class="top_01"><span class="top_01">交易积分</span>
+                   <dd>可用积分：{$u_info['integrals']}</dd>
+                   <dd>交易冻结：{$u_info['forzen_integrals']}</dd>
+                   <dd>大盘赠送：{$pan.total} 已释放：{$pan.send}</dd>
+                   <dd>今日释放：{$u_info['daily_inc']}</dd>
+                </dl>
+              </div>
+              <!--阿尔卑斯信息-->
+              <div style="float:left;">
+                <dl class="top_01"><span class="top_01">阿尔卑斯信息</span>
+                    <dt>可用：{$alps_info['num']}</span></dt>
+                    <dd>冻结：{$alps_info['forzen_num']}</dd>
+                    <dd>总资产：{$alps_info['num']+$alps_info['forzen_num']}</dd>
+                </dl>
+              </div>
+            </div>
+            <ul class="sc_statu" style="width:100%;">
+                <li style="width:423px;margin-right:5px;background:#fff;">
+                    <if condition="$u_info['status'] eq 0 ">
+                        <em class="sc_statu_type_1_1"></em>
+                        <dl>
+                            <dt>实名认证</dt>
+                            <dd class="nopass">未认证<a href="{:U('ModifyMember/modify')}" style="margin-left: 179px;">点击认证</a></dd>
+
+                        </dl>
+                        <else/>
+                        <em class="sc_statu_type_1"></em>
+                        <dl>
+                            <dt>实名认证</dt>
+                            <dd class="alpass">已认证<a href="{:U('User/updateMassage')}" style="margin-left: 179px;">查看详情</a></dd>
+                        </dl>
+                    </if>
+                </li>
+                <!--<li>
+                    <if condition="$u_info['phone']">
+                        <em class="sc_statu_type_3"></em>
+                        <dl>
+                            <dt>绑定手机</dt>
+                            <dd class="alpass">已认证 <a href="{:U('User/updateMassage')}">查看</a></dd>
+                        </dl>
+                        <else/>
+                        <em class="sc_statu_type_3_1"></em>
+                        <dl>
+                            <dt>绑定手机</dt>
+                            <dd class="nopass">未认证 <a href="{:U('ModifyMember/modify')}">点击绑定</a></dd>
+                        </dl>
+                    </if>
+
+                </li>-->
+                <li style="width:423px;background:#fff;">
+                    <em class="sc_statu_type_2"></em>
+                    <dl>
+                        <dt>账户资产</dt>
+                        <dd class="alpass">已认证<a href="{:U('User/index')}" style="margin-left: 179px;">点击进入</a></dd>
+                    </dl>
+                </li>
+            </ul>
+            <div class="sc_info_list" id="sc_info_list" style="width:100%;border-top:none;">
+                <dl style="background-color: rgb(249, 249, 249);">
+                    <dt>登录密码</dt>
+                    <dd><p>登录{$config['name']}账户时需要输入的密码</p></dd>
+                    <dd><div class="changepw"><a href="{:U('User/updatePassword')}">修改登录密码</a></div></dd>
+                </dl>
+                <dl style="background-color: rgb(255, 255, 255);">
+                    <dt>交易密码</dt>
+                    <dd><p>在{$config['name']}进行交易时需要输入的密码</p></dd>
+                    <dd><div class="changepw"><a href="{:U('User/updatePassword')}">修改交易密码</a></div></dd>
+                </dl>
+                <dl style="background-color: rgb(249, 249, 249);">
+                    <dt>实名认证</dt>
+                    <dd><p>受国家要求及为了您的资金安全需进行实名认证</p></dd>
+                    <dd>
+                        <if condition="$u_info['status'] eq 0 ">
+                            <div class="changepw">
+                                未认证 <a href="{:U('ModifyMember/modify')}">认证</a>
+                            </div>
+                            <else/>
+                            <div class="changepw">
+                                已认证 <a href="{:U('User/updateMassage')}">查看</a>
+                            </div>
+                        </if>
+                    </dd>
+                </dl>
+<script type="text/javascript">
+var active_url = "{:U('User/activeWaihui')}";
+layer.config({extend:'extend/layer.ext.js'});
+function active_user(){
+    layer.prompt({title: '输入当前登录密码，并确认', formType: 1}, function(pass, index){
+        $.post(active_url,{password:pass},function(res){
+            if(res.status==1){
+                layer.msg(res.info);
+                window.location.reload();
+            }else{
+                layer.msg(res.info);
+            }
+        });
+    });
+}
+</script>
+                <!--<dl style="background-color: rgb(255, 255, 255);">
+                    <dt>手机绑定</dt>
+                    <if condition="$u_info['phone']">
+                        <dd>
+                            <p>
+                                您已成功绑定手机
+                            </p>
+                        </dd>
+                        <dd>
+                            <div class="changepw">
+                                <a href="{:U('User/updateMassage')}">查看</a>
+                            </div>
+                        </dd>
+                        <else/>
+                        <dd>
+                            <p>
+                                未绑定手机，为了您的资金安全，建议您立即绑定
+                            </p>
+                        </dd>
+                        <dd>
+                            <div class="changepw">
+                                <a href="{:U('ModifyMember/modify')}">绑定</a>
+                            </div>
+                        </dd>
+                    </if>
+                </dl>-->
+            </div>
+        </div>
+
+        <div class="clear"></div>
+    </div>
+    <div class="clear"></div>
+</div>
+<script>
+    $(".menu11").addClass("uc-current");
+
+    function showTips(id,msg){
+        var tips = layer.tips(msg, id, {
+            tips: [1, '#fff8db'],
+            area: ['400px', '35px']
+        });
+        $(id).on('mouseout', function(){
+            layer.close(tips);
+        });
+    }
+</script>
+<!--footer start-->
+<include file="App/Home/View/Public/footer.html"/>
+<!--footer end-->

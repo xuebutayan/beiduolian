@@ -1,0 +1,198 @@
+ <include file="App/Home/View/Public/header.html"/>
+ <style>
+ .pass_ybc{ min-height:400px !important;}
+ .my_add{ margin-bottom:0px !important;}
+ </style>
+<div id="main">
+  <div class="main_box"> <include file="App/Home/View/Public/left.html"/>
+    <div class="raise right clearfix" style=" width:940px; background:#fff; padding:20px;">
+      <script type="text/javascript" src="js/ajax.js"></script>
+      <script type="text/javascript" src="js/Fnc.js"></script>
+      <script type="text/javascript" src="js/inputFormat.js"></script>
+      <div class="ybc_list">
+        <div class="ybcoin">
+          <h2 class="left">积分兑换</h2>
+          <!-- <p class="right" style=" margin-top:10px; color:#333;">您可以设置多个提款地址，这样您提款到不同的银行卡、钱包或其它平台时就会更方便。</p> -->
+          <div class="clear"></div>
+        </div>
+      </div>
+      <div class="support_ybc pass_ybc" id="verifyon">
+        <div id="tagContent" class="passContent">
+          <div class="tagContent selectTag" id="tagContent0">
+            <h2 class="choose_one">输入要兑换的金额<span>(可用积分：<strong>{$integrals}</strong>)</span><span style="float:right;margin-right:20px;"><strong id="rmbout_showtips"></strong></span></h2>
+
+           <form action="{:U('User/jifen')}" method="post" id="drawform" jump-url="{:U('User/jifen')}">
+           <table class="my_add" border="0" cellpadding="0" cellspacing="0">
+              <tbody>
+                <tr>
+                  <td style="position:relative; padding-left:90px;">兑换积分
+                    <input class="sum" name="money" id="money"  autocomplete="off" type="text" onkeyup="value=value.replace(/[^\d]/g,'');sjdz();">
+                    </td>
+                  <td>实际到帐
+                    <input class="sum" id="true_daozhang" disabled="disabled" type="text">
+                    </td>
+
+
+                </tr>
+                <tr>
+                  <td></td>
+                  <td><input style=" float:right; margin-right:103px;" class="confirm"  value="确认提交" type="submit"></td>
+                </tr>
+              </tbody>
+            </table>
+            </form>
+            <script>
+				$("#drawform").validate({
+				rules: {
+					money:{
+						required: true,
+						min: 100,
+						max: 50000,
+					  },
+					//pwdtrade:"required",
+					//code:"required",
+				},
+				messages: {
+					money:{
+						required: "请填写提现金额",
+						min: "提现金额最小100",
+						max: "提现金额最大50000",
+						},
+
+					//pwdtrade:"请填写交易密码",
+					//code:"请填写验证码",
+				},
+				submitHandler:function(form){
+					ajax_submit_form(form)
+					return false;
+				},
+				invalidHandler: function() {  //不通过回调
+					return false;
+				}
+			});
+			function sjdz(){
+				var fee = {$config.fee};
+				var m ;
+
+					//m = $("#money").val()-$("#money").val()*fee*0.01;
+
+				$("#true_daozhang").val($("#money").val());
+			}
+			</script>
+
+            <h2 class="choose_one">{$art.title}</h2>
+            <div class="turns Font14">
+              <input id="cny_outfee" value="0.003" type="hidden">
+            {$config.withdraw_warning}
+            </div>
+          </div>
+          <div class="tagContent" id="tagContent1">
+
+            <form action="{$User/withdraw}" method="post">
+              <ul class="ybc_con" id="rollout">
+                <li>
+                  <label>提现金额：</label>
+                  <input style="display:none;">
+                  <!-- for disable autocomplete on chrome -->
+                  <input style="float:left;" name="number" onkeyup="value=value.replace(/[^\d.]/g,'')" id="num2" value="0" autocomplete="off" type="text">
+                  <span class="note left" style=" height:40px; display:table-cell; vertical-align: middle;">转出金额不能小于10元</span>
+                  <div class="clear"></div>
+                </li>
+                <li>
+                  <label>&nbsp;</label>
+                  <input class="queding" value="确定" type="submit">
+                </li>
+              </ul>
+              <div class="turns">
+                <h2>使用说明</h2>
+                <p>1. 提现到元宝理财的同名账户。</p>
+                <p>2. 及时到账。</p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <style>
+.btc_new,.btc_new td {background: #DDFFDD !important;}#cb_msg_box{background:#B50000;color:#FFF;display:none;text-align:center;padding:0px;}
+</style>
+<!--    <script type="text/javascript" src="js/tab2.js"></script>
+    <script src="js/form.js"></script>
+    <script src="js/city.js"></script>
+    <script src="js/cnyout.js"></script> -->
+<script>
+$("document").ready(function(){
+    //initProvinceCity($("#p1"),$("#c1"));
+    //$('#account').inputFormat('account');
+    // $('#money_rmb').inputFormat('amount');
+});
+</script>
+
+  </div>
+  <div class="clear"></div>
+</div>
+<script>
+    $(".menu14").addClass("uc-current");
+
+    function showTips(id,msg){
+        var tips = layer.tips(msg, id, {
+            tips: [1, '#fff8db'],
+            area: ['400px', '35px']
+        });
+        $(id).on('mouseout', function(){
+            layer.close(tips);
+        });
+    }
+</script>
+<script>
+function chexiao(id){
+		layer.confirm(
+		'确定撤销',
+		{btn:['确定','取消']},
+		function(){
+		  $.post("/Home/User/chexiaoByid",{"id":id},function(data){
+			  if(data.status==0){
+						layer.msg(data['info']);
+						window.location.reload();
+					}else{
+						layer.msg(data['info']);
+						window.location.reload();
+					}
+			})
+		}
+		),
+		function(){
+			layer.msg('已取消');
+		}
+
+}
+ function sandPhone(){
+        var phone="{$member.phone}";
+
+		var i=120;
+        var tid2;
+        tid2=setInterval(function(){
+            if($("#msgt").attr("data-key")=='off'){
+                $("#msgt").attr("disabled",true);
+                $("#msgt").removeClass("class");
+                $("#msgt").addClass("button again");
+                i--;
+                $("#msgt").val(i+"秒后可重新发送");
+                if(i<=0){
+                    $("#msgt").removeAttr("disabled").val("重新发送验证码");
+                    $("#msgt").attr("data-key","on");
+                }
+            }
+        },1000);
+
+            $.post("{:U('Common/ajaxSandPhone')}",{'phone':phone},
+                    function(d){
+                       layer.msg(d.info);
+                        if(d.status==1){
+                            i=120;
+                            $("#msgt").attr("data-key","off");
+            	 }
+            });
+    }</script>
+<!--footer start-->
+<include file="App/Home/View/Public/footer.html"/>
