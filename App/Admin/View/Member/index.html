@@ -18,13 +18,13 @@
                             <td><input class="common-text" placeholder="ID" name="member_id" type="text"></td>
                             <td width="70">代理编号:</td>
                             <td><input class="common-text" placeholder="关键字" name="user_code" type="text"></td>
-                            <td><input type="checkbox" name="mt4" value="1">存在mt4帐号</td>
+
 
                             <td><input class="btn btn-primary btn2"  value="查询" type="submit"></td>
                         </tr>
                     </table>
                 </form>
-<a href="{:U('Member/index','export=1')}">导出所有</a>
+
             </div>
         </div>
         <div class="result-wrap">
@@ -46,11 +46,8 @@
                         <th>手机号</th>
                         <th>账户余额</th>
                         <th>冻结金钱</th>
-                        <th>外汇储备</th>
-                        <th>提现+通兑金</th>
-                        <th>通兑金总额</th>
-                        <th>应减通兑金</th>
-                        <th>投资金额</th>
+
+
                         <th>提现总额</th>
                         <th>贷款总额</th>
 
@@ -69,11 +66,8 @@
                             <td>{$vo['phone']}</td>
                             <td>{$vo['rmb']}</td>
                             <td>{$vo['forzen_rmb']}</td>
-                            <td>{$vo['waihui']}</td>
-                            <td>{$vo['tjz']}</td>
-                            <td>{$vo['tmoney']}</td>
-                            <td>{$vo['jtjz']}</td>
-                            <td>{$agent[$vo['user_levels']][1]-$vo['bmoney']}</td>
+
+
                             <td>{$vo['wmoney']}</td>
                             <td>{$vo['bmoney']}</td>
 

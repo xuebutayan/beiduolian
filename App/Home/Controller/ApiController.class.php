@@ -75,7 +75,7 @@ class ApiController extends CommonController {
         }
     }
 
-    //注释A
+    //注释A（增加一条释放记录）
     /* 表设计
       create table `yang_baodan`(
       `oid` int(10) unsigned not null auto_increment,
@@ -122,7 +122,7 @@ class ApiController extends CommonController {
         $data = [
             'user_id' => $post['uid'],
             'integral' => $post['integral'],
-            'remain_days' => 200,
+            'remain_days' => 100,
             'lastupdate' => strtotime(date('Y-m-d', time())),
             'nextupdate' => strtotime(date('Y-m-d', time() + 86400)),
             'posttime' => $post['times'],
@@ -143,7 +143,7 @@ class ApiController extends CommonController {
         //写入失败反回 -2
     }
 
-    //注释B
+    //注释B（直接增加积分）
     public function test_003() {
         $post = I('post.');
         //正常的POST传输
@@ -406,104 +406,6 @@ class ApiController extends CommonController {
         } else {
             $result['status'] = "-4";
             $result['info'] = '更新失败';
-            return $this->ajaxReturn($result);
-        }
-    }
-    function abc(){
-        echo 'abca';
-    }
-    //转入rmb，等额积分
-    function waihui_001(){
-        $post = I('post.');
-        //正常的POST传输
-        //$post['login']   login
-        //$post['money']     转出人民币金额
-        //$post['times']      时间
-        //$post['md5key']     加密串
-
-        $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
-        $token_this = md5($post["times"] . md5($key));
-        //验正数据是否被修改
-        if ($post["md5key"] != $token_this) {
-            $result[0] = '-1';
-            $result[1] = ' Token 不正确';
-            return $this->ajaxReturn($result);
-        }
-         //兑出比例
-        $currency_info = M('currency')->field('price_up,price_down')->where(['currency_id'=>30])->find();
-        $radio = ($currency_info['price_up']+$currency_info['price_down'])/2;
-
-        $member_id = M('Member')->where(['login'=>$post['login']])->getField('member_id');
-        if(!$member_id) return $this->ajaxReturn(['status'=>0,'info'=>'大盘不存在此用户']);
-        $data['member_id'] = $member_id;
-        $data['amount'] = 0;//floatval($post['money']*$this->config['utr']/$radio);
-        $data['money'] = floatval($post['money']*$this->config['utr']);
-        $data['addtime'] = $post['times'];
-        $data['platform'] = 'waihui';
-        $data['type'] = 2;
-
-        $id = M('alps_log')->add($data);
-        //帐号积分增加
-        $re = M('member')->where(['member_id'=>$member_id])->save(['integrals'=>['exp','integrals+'.$data['money']]]);
-        if($re){
-            $this->inte_log($member_id,$data['money'],1,'外汇转入');
-            $result['status'] = 1;
-            $result['info'] = '转入成功！';
-            return $this->ajaxReturn($result);
-        }else{
-            $result['status'] = 0;
-            $result['info'] = '转入失败！';
-            M('alps_log')->where(['id'=>$id])->save(['status'=>0]);
-            return $this->ajaxReturn($result);
-        }
-
-    }
-    //修改密码
-    function waihui_002(){
-        $post = I('post.');
-        //正常的POST传输
-        //$post['uid']   UID
-        //$post['user_name']  用户名
-        //$post['pwd']       登陆密码
-        //$post['times']      时间
-        //$post['md5key']     加密串
-
-        $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
-        $token_this = md5($post["times"] . md5($key));
-        //验正数据是否被修改
-        if ($post["md5key"] != $token_this) {
-            $result[0] = '-1';
-            $result[1] = ' Token 不正确';
-            return $this->ajaxReturn($result);
-        }
-        //如果$post['pwd1'] 为空就不修改 pwd1登陆密码
-        //如果$post['pwd2'] 为空就不修改 pwd2支付密码
-        $data = array();
-        $post['pwd'] && $pwd = md5($post['pwd']);
-        $uinfo = M('Member')->where(['member_id'=>$post['uid']])->find();
-        if($uinfo['user_id']){//修改代理中心密码
-            //远程请求
-            $url = C('daili_url').'/api/test_007';
-            $time = $post['times'];
-            $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
-            $md5key = md5($time.md5($key));
-            $post_data = ['uid'=>$uinfo['user_id'],'pwd1'=>$post['pwd'],'pwd2'=>'','times'=>$post['times'],'md5key'=>$md5key];
-            $data2 = curlPost($url,$post_data);
-            $r2 = json_decode($data2,true);
-            if($r2['status']<1){
-                $data['status'] = 2;
-                $data['info']   = '代理中心信息修改失败';
-                $this->ajaxReturn($data);
-            }
-        }
-        $re = M('Member')->where('member_id=' . $post['uid'])->save(['pwd'=>$pwd]);
-        if ($re) {
-            $result['status'] = 1;
-            $result['info'] = '修改成功';
-            return $this->ajaxReturn($result);
-        } else {
-            $result['status'] = 0;
-            $result['info'] = '修改失败';
             return $this->ajaxReturn($result);
         }
     }
