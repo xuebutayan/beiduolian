@@ -22,7 +22,6 @@
                     <dd style="color:#f18520;font-size:14px;">您好：{$u_info['name']}</dd>
                     <dd style="color:#333333;font-size:14px;" >用户名：{$u_info['user_name']|default='暂无'}</dd>
                     <dd style="color:#333333;font-size:14px;">邮箱：{$u_info['email']}</dd>
-                    <dd style="color:#333333;font-size:14px;">大盘编号：<if condition="$u_info['alps_code']">{$u_info['alps_code']}<else /><a href="{:U('Safe/generate_code')}">生成编号</a></if></dd>
                     <dd style="color:#333333;font-size:14px;">代理编号：{$u_info['user_code']|default="暂无"}</dd>
                 </dl>
               </div>
@@ -35,18 +34,13 @@
                 <dl class="top_01">
                     <span class="top_01">ALPS MT4</span>
 
-                    <dd style="color:#333333;" >储备金：{$u_info['alps_mt4']}个</dd>
-                    <if condition="$u_info['login']"><dd style="color:#333333;">A仓帐户：{$u_info['login']}</dd></if>
-                    <dd style="color:#333333;" >A仓资金：{$chubi}美元</dd>
+                    <dd style="color:#333333;" >预留金：{$u_info['ylmoney']}个</dd>
+
                 </dl>
               </div>
               <div style="float:left;">
                 <dl class="top_01">
-                    <span class="top_01">J2T MT4</span>
 
-                    <dd style="color:#333333;" >储备金：${$u_info['huge_mt4']}美元</dd>
-                    <dd style="color:#333333;">B仓账户1：{$code[0]|default='暂无'}</dd>
-                    <dd style="color:#333333;">B仓账户2：{$code[1]|default='暂无'}</dd>
                 </dl>
               </div>
               <div class="ziliao"><img src="/Public/Home/images/dian.png" style="margin-left:20px;width:8px; height:8px; margin-right:10px;"><a class="current">个人资料
@@ -56,8 +50,6 @@
                     <dt>可用：￥{$u_info['rmb']|floatval=###}</span></dt>
                     <dd>冻结：￥{$u_info['forzen_rmb']|floatval=###}</dd>
                     <dd>总资产：￥{$u_info['rmb']+$u_info['forzen_rmb']|floatval=###}</dd>
-                    <!--<dd>J2T MT4:${$u_info['huge_mt4']} 美元</dd>
-                    <dd>ALPS MT4:{$u_info['alps_mt4']} 个</dd>-->
                 </dl>
               </div>
               <div style="float:left;">

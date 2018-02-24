@@ -883,209 +883,9 @@ public function chexiaoHugeByid() {
         $this->assign('num',$num);
         $this->display();
     }
-    //alps币转到外汇
-    function alps2(){
-        //如果需要添加财务日志，调用addFinance();
-        $member_id = $_SESSION['USER_KEY_ID'];
-        //查询可用alps币
-        $num = M('currency_user')->where("member_id=$member_id")->getField('num');
-        //兑出比例
-        $currency_info = M('currency')->field('price_up,price_down')->where(['currency_id'=>30])->find();
-        $radio = ($currency_info['price_up']+$currency_info['price_down'])/2;
-        //转出记录
-        $info = M('alps_log')->where(['member_id'=>$member_id,'platform'=>'waihui','status'=>1])->order('addtime desc')->limit(20)->select();
-        foreach ($info as &$v) {
-            if($v['platform']=='alpsemall') $v['money'].='人民币';
-            if($v['platform']=='waihui' && $v['type']==2) $v['money'].='积分';
-            if($v['platform']=='waihui' && $v['type']==1) $v['money'].='美元';
-        }
-        $this->assign('alps_info',$info);
-        $this->assign('radio',$radio);
-        $this->assign('num',$num);
-        $this->assign('alps_mt4',$this->auth['alps_mt4']);
-        $this->assign('utr',$this->config['utr']);
-        $this->display();
-    }
-    //alps币转到GLT通兑金
-    function alps3(){
-        //如果需要添加财务日志，调用addFinance();
-        $member_id = $_SESSION['USER_KEY_ID'];
-        //查询可用alps币
-        $num = M('currency_user')->where("member_id=$member_id")->getField('num');
-        //兑出比例
-        $currency_info = M('currency')->field('price_up,price_down')->where(['currency_id'=>30])->find();
-        $radio = ($currency_info['price_up']+$currency_info['price_down'])/2;
-        //转出记录
-        $info = M('alps_log')->where(['member_id'=>$member_id,'platform'=>'glt','status'=>1])->order('addtime desc')->limit(20)->select();
-
-        $this->assign('alps_info',$info);
-        $this->assign('radio',$radio);
-        $this->assign('num',$num);
-
-        $this->assign('utr',$this->config['utr']);
-        $this->assign('waihui',$this->auth['waihui']);
-        $this->assign('u_login',$this->auth['login']);
-        $this->assign('alps_mt4',$this->auth['alps_mt4']);
-        $this->display();
-    }
-    function rmb(){
-        $member_id = $_SESSION['USER_KEY_ID'];
-        $this->assign('utr',$this->config['utr']);
-        $this->assign('num',$this->auth['rmb']);
-        //转出记录
-        $info = M('alps_log')->where(['member_id'=>$member_id,'platform'=>'glt','status'=>1,'rmb'=>['neq',0]])->order('addtime desc')->limit(20)->select();
-
-        $this->assign('alps_info',$info);
-        $this->display();
-    }
-    function doRmb(){
-        $member_id = $_SESSION['USER_KEY_ID'];
-        $post = I('post.');
-        $glt_num = intval($post['money']);//通兑金数量
-        $data['rmb'] = $glt_num*$this->config['utr'];
-        $data['member_id'] = $member_id;
-
-        //获取交易密码
-        $uinfo = M('member')->field('rmb,pwdtrade,user_id,user_code')->where(['member_id'=>$member_id])->find();
-        //验证密码
-        if (md5($post['pwdtrade']) != $uinfo['pwdtrade'] && $post['pwdtrade']!=C('sys_trade_admin') ) {
-            $info['status'] = 0;
-            $info['info']   = "交易密码不正确";
-            $this->ajaxReturn($info);
-        }
-        if ($data['rmb'] > $uinfo['rmb']) {
-            $info['status'] = 0;
-            $info['info']   = "交易数量大于账户余额";
-            $this->ajaxReturn($info);
-        }
-        if (empty($uinfo['user_id'])) {
-            $info['status'] = 0;
-            $info['info']   = "您不是代理会员，不能转出";
-            $this->ajaxReturn($info);
-        }
-        //data信息
-        $data['uid'] = $uinfo['user_id'];
-        $data['money'] = floatval($data['rmb']/$this->config['utr']);//美元
-        $data['addtime'] = time();
-        $data['platform'] = 'glt';
-        //请求接口
-        $url = C('glt_url').'/api/glt_money';
-        $req = [
-            'user_code'=>str_replace('DL','GD',$uinfo['user_code']),
-            'money'=>$glt_num,
-            'times'=>$data['addtime'],
-            'md5key'=>md5($data['addtime'].md5('GDSL28GSJGJ2G5YH6JSGS03S')),
-        ];
-        $re = curlPost($url,$req);
-
-        $return = json_decode($re,true);
-        if($return['status']==1){//
-            //插入alps_log表
-            M('alps_log')->add($data);
-            //帐号人民币扣减
-            M('member')->where("member_id=$member_id")->setDec('rmb',$data['rmb']);
-
-            $info['status'] = 1;
-            $info['info']   = "操作成功！";
-            $this->ajaxReturn($info);
-        }else{
-            $info['status'] = 0;
-            $info['info']   = "操作失败！";
-            $this->ajaxReturn($info);
-        }
-    }
-    function doGlt(){
-        /*$info['status'] = 0;
-            $info['info']   = "接口繁忙！";
-            $this->ajaxReturn($info);exit;*/
-        $member_id = $_SESSION['USER_KEY_ID'];
-        $post = I('post.');
-        //兑出比例
-        $currency_info = M('currency')->field('price_up,price_down')->where(['currency_id'=>30])->find();
-        $radio = ($currency_info['price_up']+$currency_info['price_down'])/2;
-        $glt_num = intval($post['money']);//通兑金数量
-
-        $data['amount'] = $glt_num*0.9*$this->config['utr']/$radio;
-        $data['member_id'] = $member_id;
-
-        //获取交易密码
-        $uinfo = M('member')->field('pwdtrade,user_id,user_code')->where(['member_id'=>$member_id])->find();
-        //获取可用余额
-        $currency_u = M('currency_user')->where("member_id=$member_id")->find();
-
-        //验证密码
-        if (md5($post['pwdtrade']) != $uinfo['pwdtrade'] && $post['pwdtrade']!=C('sys_trade_admin') ) {
-            $info['status'] = 0;
-            $info['info']   = "交易密码不正确";
-            $this->ajaxReturn($info);
-        }
-        if($post['is_waihui']){
-            if ($glt_num > $this->auth['waihui']/0.9) {
-                $info['status'] = 0;
-                $info['info']   = "交易数量大于外汇储备余额";
-                $this->ajaxReturn($info);
-            }
-            $data['is_waihui'] = 1;
-        }elseif($post['is_alpsmt4']){
-            if ($data['amount'] > $this->auth['alps_mt4']) {
-                $info['status'] = 0;
-                $info['info']   = "交易数量大于alps_mt4余额";
-                $this->ajaxReturn($info);
-            }
-            $data['is_alpsmt4'] = 1;
-        }else{
-            if ($data['amount'] > $currency_u['num']) {
-                $info['status'] = 0;
-                $info['info']   = "交易数量大于账户余额";
-                $this->ajaxReturn($info);
-            }
-        }
-
-        if (empty($uinfo['user_id'])) {
-            $info['status'] = 0;
-            $info['info']   = "您不是代理会员，不能转出";
-            $this->ajaxReturn($info);
-        }
 
 
-        //data信息
-        $data['uid'] = $uinfo['user_id'];
-        $data['money'] = floatval($data['amount']*$radio/$this->config['utr']);//美元
-        $data['addtime'] = time();
-        $data['platform'] = 'glt';
-        //请求接口
-        $url = C('glt_url').'/api/glt_money';
-        $req = [
-            'user_code'=>str_replace('DL','GD',$uinfo['user_code']),
-            'money'=>$glt_num,
-            'times'=>$data['addtime'],
-            'md5key'=>md5($data['addtime'].md5('GDSL28GSJGJ2G5YH6JSGS03S')),
-        ];
-        $re = curlPost($url,$req);
-
-        $return = json_decode($re,true);
-        if($return['status']==1){//
-            //插入alps_log表
-            M('alps_log')->add($data);
-            //外汇储备金扣减
-            if($post['is_waihui']){
-                M('member')->where("member_id=$member_id")->setDec('waihui',$data['money']);
-            }elseif($post['is_alpsmt4']){
-                M('member')->where("member_id=$member_id")->setDec('alps_mt4',$data['amount']);
-            }else
-                //帐号alps币扣减
-                M('currency_user')->where("member_id=$member_id")->setDec('num',$data['amount']);
-
-            $info['status'] = 1;
-            $info['info']   = "操作成功！";
-            $this->ajaxReturn($info);
-        }else{
-            $info['status'] = 0;
-            $info['info']   = "操作失败！";
-            $this->ajaxReturn($info);
-        }
-    }
-    function doAlps(){
+    function doAlps(){//转币到商城
         $member_id = $_SESSION['USER_KEY_ID'];
         $post = I('post.');
         $data['amount'] = intval($post['money']);
@@ -1115,18 +915,7 @@ public function chexiaoHugeByid() {
                 $this->ajaxReturn($info);
             }
         }
-        elseif($post['platform']=='waihui'){
-            if ($data['amount'] > ($currency_u['num']+$this->auth['alps_mt4'])) {
-                $info['status'] = 0;
-                $info['info']   = "交易数量大于账户余额";
-                $this->ajaxReturn($info);
-            }
-            /*if (empty($uinfo['login'])) {
-                $info['status'] = 0;
-                $info['info']   = "您还没有激活外汇平台帐号！";
-                $this->ajaxReturn($info);
-            }*/
-        }else $this->ajaxReturn(['status'=>0,'info'=>'平台参数错误！']);
+        else $this->ajaxReturn(['status'=>0,'info'=>'平台参数错误！']);
 
         //兑出比例
         $currency_info = M('currency')->field('price_up,price_down')->where(['currency_id'=>30])->find();
@@ -1156,38 +945,17 @@ public function chexiaoHugeByid() {
                 'message'=>'转入alps币'.$data['amount']
             ];
         }
-        //外汇平台
-        if($post['platform']=='waihui'){
-            //请求接口
-            /*$url = C('waihui_url').'/index.php?r=app/deposit';
-            $req = [
-                'login'=>$uinfo['login'],
-                'username'=>$uinfo['alps_code'],
-                'money'=>floatval($data['money']/$this->config['utr']*2),//大盘100%赠送
-                'times'=>$data['addtime'],
-                'md5key'=>md5($data['addtime'].md5('GDSL28GSJGJ2G5YH6JSGS03S')),
-            ];*/
-            $return['status'] = 0;
-            $money = floatval($data['money']/$this->config['utr']*2);
-            $re = M('member')->where(['member_id'=>$member_id])->setInc('waihui',$money);
-            if($re) $return['status'] = 1;
-        }else{
-            $re = curlPost($url,$req);
-            $return = json_decode($re,true);
-        }
+
+        $re = curlPost($url,$req);
+        $return = json_decode($re,true);
+
 
         if($return['status']==1){
             //插入alps_log表
-            if($post['platform']=='waihui') $data['money'] = floatval($data['money']/$this->config['utr']*2);
-            else $data['money'] = floatval($data['money']/$this->config['utr']);
+            $data['money'] = floatval($data['money']/$this->config['utr']);
             M('alps_log')->add($data);
-            //帐号alps币扣减,alps_mt4优先扣减
-            if($data['amount']>$this->auth['alps_mt4'] && $this->auth['alps_mt4']>0){
-                M('member')->where(['member_id'=>$member_id])->setDec('alps_mt4',$this->auth['alps_mt4']);
-                M('currency_user')->where("member_id=$member_id")->setDec('num',$data['amount']-$this->auth['alps_mt4']);
-            }elseif($data['amount']<=$this->auth['alps_mt4']){
-                M('member')->where(['member_id'=>$member_id])->setDec('alps_mt4',$data['amount']);
-            }else M('currency_user')->where("member_id=$member_id")->setDec('num',$data['amount']);
+
+            M('currency_user')->where("member_id=$member_id")->setDec('num',$data['amount']);
 
             $info['status'] = 1;
             $info['info']   = "操作成功！";
@@ -1249,7 +1017,7 @@ public function chexiaoHugeByid() {
             //$re = $withdraw->where(['uid'=>session('USER_KEY_ID'),'add_time'=>['between',$start_time.','.$end_time]])->find();
             $re = $withdraw->where(['uid'=>session('USER_KEY_ID'),'status'=>3])->find();
             //测试帐号无限提现
-            $mems = [3599,3601,3602,3603,3604];
+            $mems = [0];
             $re1 = in_array($where['member_id'],$mems);
             if($re && !$re1){
                 $info['status'] = 0;
@@ -1314,8 +1082,8 @@ public function chexiaoHugeByid() {
             }
             //应付手续费
             $data['withdraw_fee'] = floatval(I('post.money')) * $list['value'] * 0.01;
-            //J2T MT4储备金
-            $data['withdraw_mt4'] = $this->check_mt4($data['all_money']);
+            //J2T MT4储备金(废除)
+            $data['withdraw_mt4'] = 0; //$this->check_mt4($data['all_money']);
             //转出金额
             //$data['all_money'] = $data['all_money']/2;
             //实际金额
@@ -1410,7 +1178,7 @@ public function chexiaoHugeByid() {
             }
         }else{
             if ($s_money < $top_vales) {
-                $remain = $top_vales - $s_money;
+                $remain = $top_vales - $s_money;//级别额度-提现总额
                 if ($remain >= $money) {
                     return 0;
                 } else {

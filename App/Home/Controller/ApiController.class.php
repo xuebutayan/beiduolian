@@ -75,7 +75,7 @@ class ApiController extends CommonController {
         }
     }
 
-    //注释A
+    //注释A（增加一条释放记录）
     /* 表设计
       create table `yang_baodan`(
       `oid` int(10) unsigned not null auto_increment,
@@ -97,7 +97,7 @@ class ApiController extends CommonController {
         //$post['user_name']  用户名
         //$post['user_code']  用户编号
         //$post['levels']     等级
-        //$post['integral']   激活成功给的总积分 分200天分完
+        //$post['integral']   激活成功给的总积分 分100天分完
         //$post['times']      时间
         //$post['md5key']     加密串
 
@@ -122,7 +122,7 @@ class ApiController extends CommonController {
         $data = [
             'user_id' => $post['uid'],
             'integral' => $post['integral'],
-            'remain_days' => 200,
+            'remain_days' => 100,
             'lastupdate' => strtotime(date('Y-m-d', time())),
             'nextupdate' => strtotime(date('Y-m-d', time() + 86400)),
             'posttime' => $post['times'],
@@ -143,7 +143,7 @@ class ApiController extends CommonController {
         //写入失败反回 -2
     }
 
-    //注释B
+    //注释B（直接增加积分）
     public function test_003() {
         $post = I('post.');
         //正常的POST传输
@@ -409,101 +409,104 @@ class ApiController extends CommonController {
             return $this->ajaxReturn($result);
         }
     }
-    function abc(){
-        echo 'abca';
-    }
-    //转入rmb，等额积分
-    function waihui_001(){
+    //贝多注册接口
+    public function beiduo_001(){
         $post = I('post.');
         //正常的POST传输
-        //$post['login']   login
-        //$post['money']     转出人民币金额
-        //$post['times']      时间
-        //$post['md5key']     加密串
+        //$post['bd_id']        会员中心用户ID(必须)
+        //$post['bd_code']        会员中心用户编号(必须)
+        //$post['pwd1']       登陆密码（必须）
+        //$post['pwd2']       支付密码（必须）
+        //$post['integrals']    初始化的积分数量
+        //$post['times']      时间（必须）
+        //$post['md5key']     加密串（必须）
 
         $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
         $token_this = md5($post["times"] . md5($key));
         //验正数据是否被修改
         if ($post["md5key"] != $token_this) {
-            $result[0] = '-1';
-            $result[1] = ' Token 不正确';
+            $result['status'] = "-1";
+            $result['info'] = '数据传输错误';
             return $this->ajaxReturn($result);
         }
-         //兑出比例
-        $currency_info = M('currency')->field('price_up,price_down')->where(['currency_id'=>30])->find();
-        $radio = ($currency_info['price_up']+$currency_info['price_down'])/2;
+        //验正邮箱 是否注册过
+        //写入成功反回 1
+        //写入失败反回 -2
+        $member = M('Member');
+        $re_code = $member->where(array('bd_code' => $post['bd_code']))->find();
 
-        $member_id = M('Member')->where(['login'=>$post['login']])->getField('member_id');
-        if(!$member_id) return $this->ajaxReturn(['status'=>0,'info'=>'大盘不存在此用户']);
-        $data['member_id'] = $member_id;
-        $data['amount'] = 0;//floatval($post['money']*$this->config['utr']/$radio);
-        $data['money'] = floatval($post['money']*$this->config['utr']);
-        $data['addtime'] = $post['times'];
-        $data['platform'] = 'waihui';
-        $data['type'] = 2;
-
-        $id = M('alps_log')->add($data);
-        //帐号积分增加
-        $re = M('member')->where(['member_id'=>$member_id])->save(['integrals'=>['exp','integrals+'.$data['money']]]);
-        if($re){
-            $this->inte_log($member_id,$data['money'],1,'外汇转入');
-            $result['status'] = 1;
-            $result['info'] = '转入成功！';
+        if ($re_code) {
+            $result['status'] = "-2";
+            $result['info'] = "该邮箱已存在";
             return $this->ajaxReturn($result);
-        }else{
-            $result['status'] = 0;
-            $result['info'] = '转入失败！';
-            M('alps_log')->where(['id'=>$id])->save(['status'=>0]);
-            return $this->ajaxReturn($result);
-        }
-
-    }
-    //修改密码
-    function waihui_002(){
-        $post = I('post.');
-        //正常的POST传输
-        //$post['uid']   UID
-        //$post['user_name']  用户名
-        //$post['pwd']       登陆密码
-        //$post['times']      时间
-        //$post['md5key']     加密串
-
-        $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
-        $token_this = md5($post["times"] . md5($key));
-        //验正数据是否被修改
-        if ($post["md5key"] != $token_this) {
-            $result[0] = '-1';
-            $result[1] = ' Token 不正确';
-            return $this->ajaxReturn($result);
-        }
-        //如果$post['pwd1'] 为空就不修改 pwd1登陆密码
-        //如果$post['pwd2'] 为空就不修改 pwd2支付密码
-        $data = array();
-        $post['pwd'] && $pwd = md5($post['pwd']);
-        $uinfo = M('Member')->where(['member_id'=>$post['uid']])->find();
-        if($uinfo['user_id']){//修改代理中心密码
-            //远程请求
-            $url = C('daili_url').'/api/test_007';
-            $time = $post['times'];
-            $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
-            $md5key = md5($time.md5($key));
-            $post_data = ['uid'=>$uinfo['user_id'],'pwd1'=>$post['pwd'],'pwd2'=>'','times'=>$post['times'],'md5key'=>$md5key];
-            $data2 = curlPost($url,$post_data);
-            $r2 = json_decode($data2,true);
-            if($r2['status']<1){
-                $data['status'] = 2;
-                $data['info']   = '代理中心信息修改失败';
-                $this->ajaxReturn($data);
+        }else {
+            //写入数据库------》
+            $data = [
+                'bd_code' => $post['bd_code'],
+                'bd_id' => $post['bd_id'],
+                'pwd' => $post['pwd1'],
+                'pwdtrade' => $post['pwd2'],
+                'reg_time' => time(),
+                'integrals' => floatval($post['integrals'])
+            ];
+            $re = $member->add($data);
+            if ($re) {
+                $result['status'] = "1";
+                $result['info'] = '注册成功';
+                return $this->ajaxReturn($result);
+            } else {
+                $result['status'] = "-4";
+                $result['info'] = '注册失败';
+                return $this->ajaxReturn($result);
             }
         }
-        $re = M('Member')->where('member_id=' . $post['uid'])->save(['pwd'=>$pwd]);
-        if ($re) {
-            $result['status'] = 1;
-            $result['info'] = '修改成功';
+    }
+    //贝多传送积分接口
+    public function beiduo_002(){
+        $post = I('post.');
+        //正常的POST传输
+        //$post['bd_id']        会员中心用户ID
+        //$post['integrals']     转入积分
+        //$post['times']      时间
+        //$post['md5key']     加密串
+
+        $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
+        $token_this = md5($post["times"] . md5($key));
+        //验正数据是否被修改
+        if ($post["md5key"] != $token_this) {
+            $result['status'] = "-1";
+            $result['info'] = '数据传输错误';
             return $this->ajaxReturn($result);
+        }
+        //验正$post['times']时间 小于或等于上次转入金额时间不给通过
+        $member = M('Member');
+        $info = $member->where(array('bd_id' => $post['bd_id']))->field('member_id,posttime')->find();
+        if ($info['posttime'] >= $post['times']) {
+            $result['status'] = "-2";
+            $result['info'] = '数据传输错误';
+            return $this->ajaxReturn($result);
+        }
+
+        //写入数据库------》
+        //转入金额成功记录post['times']时间
+        //写入成功反回 1
+        //写入失败反回 -2
+        $re = $member->where(['bd_id' => $post['bd_id']])->setInc('integrals', $post['integrals']);
+        if ($re) {
+            $this->inte_log($info['member_id'], $post['integrals'], 1, '积分转入'); //积分日志
+            $res = $member->where(['bd_id' => $post['bd_id']])->setField('posttime', $post['times']);
+            if ($res) {
+                $result['status'] = "1";
+                $result['info'] = '数据写入成功';
+                return $this->ajaxReturn($result);
+            } else {
+                $result['status'] = "-3";
+                $result['info'] = '数据写入失败';
+                return $this->ajaxReturn($result);
+            }
         } else {
-            $result['status'] = 0;
-            $result['info'] = '修改失败';
+            $result['status'] = "-3";
+            $result['info'] = '数据写入失败';
             return $this->ajaxReturn($result);
         }
     }

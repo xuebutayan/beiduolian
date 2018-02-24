@@ -28,6 +28,7 @@ class IndexController extends AdminController {
      * 统计全站信息
      */
     public function infoStatistics(){
+        //echo M('integrals_log')->where(['member_id'=>1,'type'=>1])->sum('num');
         $baodan = M('Baodan');
         //统计全站信息
         //送过来积分总数
@@ -178,7 +179,7 @@ class IndexController extends AdminController {
         $percent = intval($p*$pagesize*(100/$total));
         $this->ajaxReturn(['info'=>'当前执行完成'.(($percent<=100)?$percent:100).'%','status'=>1]);
     }
-    function doJifen(){exit;
+    function doJifen(){
         $baodan = M('Baodan');
         $member = M('Member');
         $p = !empty($_GET['p'])?$_GET['p']:1;
@@ -210,7 +211,7 @@ class IndexController extends AdminController {
         foreach ($udata as $u) {
             $data = array();
             $data['user_id'] = $u['user_id'];
-            $member_info = $member->field('member_id,bao')->where($data)->find();
+            $member_info = $member->field('member_id,user_levels,bao,intmoney,intday')->where($data)->find();
             if($member_info['bao']==1) continue;//已报过单防止重复
 
             $member_id = $member_info['member_id'];
@@ -218,36 +219,45 @@ class IndexController extends AdminController {
 
             if($list){
                 $jifen = 0;
-                $times = [];
+                $times = [];//记录每笔积分释放次数
                 foreach ($list as $v) {
                     if($v['remain_days']){
-                    	$jifen += $v['integral']*0.005;
+                    	$jifen += $v['integral']*0.01;//每天释放数
                     	$baodan->where('oid='.$v['oid'])->setDec('remain_days');
                     }
                     $times[] = $v['remain_days']?(101-$v['remain_days']):100;
                 }
-                //检测是否有贷款用户
-                $borrow = M('Borrow');
-                $info = $borrow->where(['status'=>2,'member_id'=>$member_id])->find();
-                $cha = $info['money']*1.2-$info['paymoney'];
-                $o_jifen = $jifen;
 
-                if($member_id && $jifen) $this->inte_log($member_id,$o_jifen,1,'大盘赠送');
+                if($member_id && $jifen) $this->inte_log($member_id,$jifen,1,'大盘赠送');
 
-                if($info && $cha>0){
-                    //当日还款数额小于当日释放积分的60%
-                    if($cha < $jifen*0.6){
-                        $jifen = $jifen-$cha;
-                        $this->inte_log($member_id,$cha,3,'大盘扣减');
-                        $borrow->where(['member_id'=>$member_id])->save(['status'=>3,'paymoney'=>['exp','paymoney+'.$cha]]);
-                    }else{
-                        $re = $borrow->where(['member_id'=>$member_id])->setInc('paymoney',$jifen*0.6);
-                        $this->inte_log($member_id,$jifen*0.6,3,'大盘扣减');
-                        $jifen = $jifen*0.4;
-                    }
-                }
+                //积分的15%进商城，1%进爱心基金
                 $times = implode(',',$times);
-                $member->where(array('user_id'=>$u['user_id']))->save(['integrals'=>['exp','integrals+'.$jifen],'daily_inc'=>$o_jifen,'send_times'=>$times,'bao'=>1]);
+
+                $m_data = [
+                    //'integrals'=>['exp','integrals+'.$jifen*0.84],
+                    'daily_inc'=>$jifen,
+                    'send_times'=>$times,
+                    'bao'=>1,
+                    'shopmoney'=>['exp','shopmoney+'.$jifen * 0.15],
+                    'axmoney'=>['exp','axmoney+'.$jifen * 0.01],
+                    'intday'=>['exp','intday+1']
+                ];
+                //是否超过等级投资额
+                $total_int = M('integrals_log')->where(['member_id'=>$member_id,'type'=>1])->sum('num');
+                if($total_int>=$this->agent_type[$member_info['user_levels']][1]){
+                    $m_data['ylmoney'] = ['exp','ylmoney+'.$jifen*0.3];
+                    $zeng_money = $jifen*0.54;
+                }else{
+                    $zeng_money = $jifen*0.84;
+                }
+                //每10天解冻一次
+                if(($member_info['intday']+1)%10==0){
+                    $m_data['integrals'] = ['exp','integrals+'.($zeng_money+$member_info['intmoney'])];
+                    $m_data['intmoney'] = 0;
+                }else{
+                    $m_data['intmoney'] = ['exp','intmoney+'.$zeng_money];
+                }
+                $member->where(array('user_id'=>$u['user_id']))->save($m_data);
             }
         }
         if($p>$pages){
@@ -302,10 +312,10 @@ class IndexController extends AdminController {
                 $times = [];
                 foreach ($list as $v) {
                     if($v['remain_days']){
-                        $jifen += $v['integral']*0.005;
+                        $jifen += $v['integral']*0.01;
                         $baodan->where('oid='.$v['oid'])->setDec('remain_days');
                     }
-                    $times[] = $v['remain_days']?(201-$v['remain_days']):200;
+                    $times[] = $v['remain_days']?(101-$v['remain_days']):100;
                 }
                 //检测是否有贷款用户
                 $borrow = M('Borrow');

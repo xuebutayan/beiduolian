@@ -51,7 +51,7 @@ return array (
 
 		// 显示错误信息
 		'SHOW_ERROR_MSG' => true,
-        //'SHOW_PAGE_TRACE' =>true,
+        'SHOW_PAGE_TRACE' =>true,
 		//关闭debug模式错误跳入404
 		//'TMPL_EXCEPTION_FILE' =>'./404.html'
 

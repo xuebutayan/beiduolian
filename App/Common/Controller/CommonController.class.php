@@ -82,12 +82,12 @@ class CommonController extends Controller {
         $this->assign('currency',$currency);
         //代理级别
         $agent_type = [
-            0 => ['无代理', 0],
-            1 => ['基础代理', 0],
-            2 => ['中级代理', 5000],
-            3 => ['高级代理', 20000],
-            4 => ['旗舰代理', 20000],
-            5 => ['战略代理', 0]
+            0 => ['无星', 0],
+            1 => ['一星', 3500],
+            2 => ['二星', 10500],
+            3 => ['三星', 35000],
+            4 => ['四星', 70000],
+            5 => ['五星', 140000]
         ];
         $this->agent_type = $agent_type;
         $this->assign('agent_type',$agent_type);
