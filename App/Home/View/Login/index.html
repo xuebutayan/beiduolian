@@ -16,12 +16,14 @@
                 <li>
                     <!--<label>&nbsp;</label>--><input id='use_name1' type="radio"  name="use_name" value='1' style="width:auto" onchange="ckuse()" checked="checked" > 兑科技代理登录
                     &nbsp;&nbsp;&nbsp;&nbsp;
+                    <input id='use_name2' type="radio"  name="use_name" value='2' style="width:auto" onchange="ckuse()" > 贝多登录
+                    &nbsp;&nbsp;&nbsp;&nbsp;
                     <label>&nbsp;</label><input id='use_name' type="radio" name="use_name" value='0' style="width:auto" onchange="ckuse()"  > 本站用户登录
                 </li>
                 <li><label for="email" class="youxiang" id="cklabel">代理用户名：</label>
                     <!--<input style="display:none">--><!-- for disable autocomplete on chrome -->
                     <input name="email" id="email" class="" i="" type="text" onblur="ckemail(this)"><!-- autocomplete="off"/>-->
-                    <!--<span class="note" id="emailmsg" style="color:red"></span>-->
+                    <span class="note" id="emailmsg" style="color:red"></span>
                 </li>
                 <!--<li><label>&nbsp;</label><input id='use_name' type="checkbox" name="use_name" value='1' style="width:auto" onchange="ckuse()"> 使用用户名登录</li>-->
                 <li><label for="pwd" class="youxiang">密码：</label>
@@ -197,16 +199,20 @@
     </div>
 </div>
 <script>
-    var uflag = false;
+    var uflag = 1;
     //var uflag = true;
     vali = {email: 0, pwd: 0};
     function ckuse() {
-        uflag = $('#use_name').is(':checked');
-        if (uflag) {
+        //uflag = $('#use_name').is(':checked');
+        uflag = $("input[name='use_name']:checked").val();
+        if (uflag==0) {
             //alert("1");
              $('#cklabel').html('邮箱/手机号：');
              $('#emailmsg').html(' ');
 
+        }else if(uflag==2){
+            $('#cklabel').html('贝多编号：');
+             $('#emailmsg').html(' ');
         } else {
             //alert("2");
             $('#cklabel').html('代理用户名：');
@@ -216,7 +222,7 @@
     }
 
     function ckemail(obj) {
-        if (uflag){
+        if (uflag==0){
             $.post("{:U('Login/checkIp')}", {email: $(obj).val()},
                     function (d) {
                         if (d.status == 1) {
@@ -224,8 +230,8 @@
                             $('#birthmsg').html(d.msg);
                         }
                         if (d.status == 2) {
-                            //validateMsg('email', d.msg, vali.email = 0);
-							return validateMsg('email', '', vali.email = 0);
+                            validateMsg('email', d.msg, vali.email = 0);
+							//return validateMsg('email', '', vali.email = 0);
                             // alert("3");
                         } else {
                             //return validateMsg('email', '', vali.email = 1);
@@ -235,7 +241,7 @@
                     }, 'json');
                     // alert("5");
                  }
-        else{
+        else if(uflag==1){
             $.post("{:U('Login/checkIp2')}", {email: $(obj).val()},
                     function (d) {
                         if (d.status == 1) {
@@ -250,7 +256,24 @@
                             // alert("4");
                         }
                     }, 'json');
-    }}
+    }else{
+        $.post("{:U('Login/checkIp3')}", {email: $(obj).val()},
+                    function (d) {
+                        if (d.status == 1) {
+                            $("#birthcheck").show();
+                            $('#birthmsg').html(d.msg);
+                        }
+                        if (d.status == 2) {
+                            validateMsg('email', d.msg, vali.email = 0);
+                            // alert("3");
+                        } else {
+                            return validateMsg('email', '', vali.email = 1);
+                            // alert("4");
+                        }
+                    }, 'json');
+    }
+
+}
 
     $('#pwd').bind('blur', function () {
         var pLen = $(this).val().length;

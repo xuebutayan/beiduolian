@@ -30,8 +30,15 @@ class LoginController extends CommonController{
         $opwd = I('post.pwd');
         $pwd = md5($opwd);
         $M_member = D('Member');
-        if($_POST['use_name']){
+        if($_POST['use_name']==1){
             $info = $M_member->where(array('user_name'=>$email))->find();
+            if($info==false){
+                $data['status']=2;
+                $data['info']="会员不存在";
+                $this->ajaxReturn($data);
+            }
+        }elseif($_POST['use_name']==2){
+            $info = $M_member->where(array('bd_code'=>$email))->find();
             if($info==false){
                 $data['status']=2;
                 $data['info']="会员不存在";
@@ -98,7 +105,21 @@ class LoginController extends CommonController{
         session('USER_KEY_ID',$info['member_id']);
         session('USER_KEY',$info['email']);//用户名
         session('STATUS',$info['status']);//用户状态
+        //如果是贝多会员，需要同步积分
+        if($info['bd_code']){
+            $url = C('bd_url');
+            $time = time();
+            $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
+            $data = [
+            'uid'=>$info['bd_id'],
+            'integrals'=>$info['integrals'],
+            'times'=>$time,
+            'md5key'=>md5($time.md5($key))
+            ];
 
+            $re = curlPost($url,$data);
+            $result = json_decode($re,true);
+        }
         $data['status']=1;
         $data['info']="登录成功";
         $this->ajaxReturn($data);
@@ -332,6 +353,30 @@ class LoginController extends CommonController{
     }
     function checkIp2($email){
         $where['user_name']= $email;
+        //检查用户是否存在
+        $info =  M('Member')->where($where)->find();
+        if(!$info){
+            $data['status'] = 2;
+            $data['msg'] = '用户不存在';
+            $this->ajaxReturn($data);
+        }
+        //检查是否做了身份认证
+        if($info['idcard']){
+            //如果login_ip不存在那么就是第一次登录取注册IP
+            $old_login_ip = $info['login_ip']?$info['login_ip']:$info['ip'];
+            $new_ip = get_client_ip(0,1);
+            if($old_login_ip!=$new_ip){
+                $data['status'] = 1;
+                $data['msg'] = '系统监测到您的账号本次登录IP和上次不同，为了保障您的账户资产安全，请输入您在'.$this->config['name'].'预留的身份证上的出生日期；如还未实名认证，请联系客服认证。';
+                $this->ajaxReturn($data);
+            }
+        }
+        $data['status'] = 0;
+        $data['msg'] = '';
+        $this->ajaxReturn($data);
+    }
+    function checkIp3($email){
+        $where['bd_code']= $email;
         //检查用户是否存在
         $info =  M('Member')->where($where)->find();
         if(!$info){

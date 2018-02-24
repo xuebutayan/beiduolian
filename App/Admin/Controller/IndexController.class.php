@@ -28,6 +28,7 @@ class IndexController extends AdminController {
      * 统计全站信息
      */
     public function infoStatistics(){
+        //echo M('integrals_log')->where(['member_id'=>1,'type'=>1])->sum('num');
         $baodan = M('Baodan');
         //统计全站信息
         //送过来积分总数
@@ -178,7 +179,7 @@ class IndexController extends AdminController {
         $percent = intval($p*$pagesize*(100/$total));
         $this->ajaxReturn(['info'=>'当前执行完成'.(($percent<=100)?$percent:100).'%','status'=>1]);
     }
-    function doJifen(){exit;
+    function doJifen(){
         $baodan = M('Baodan');
         $member = M('Member');
         $p = !empty($_GET['p'])?$_GET['p']:1;
@@ -237,20 +238,20 @@ class IndexController extends AdminController {
                     'daily_inc'=>$jifen,
                     'send_times'=>$times,
                     'bao'=>1,
-                    'shopmoney'=>$jifen * 0.15,
-                    'axmoney'=>$jifen * 0.01,
+                    'shopmoney'=>['exp','shopmoney+'.$jifen * 0.15],
+                    'axmoney'=>['exp','axmoney+'.$jifen * 0.01],
                     'intday'=>['exp','intday+1']
                 ];
                 //是否超过等级投资额
-                $total_int = M('integrals_log')->where(['title'=>'大盘赠送','type'=>1])->sum('num');
+                $total_int = M('integrals_log')->where(['member_id'=>$member_id,'type'=>1])->sum('num');
                 if($total_int>=$this->agent_type[$member_info['user_levels']][1]){
-                    $m_data['ylmoney'] = ['exp','ylmoney'+$jifen*0.3];
+                    $m_data['ylmoney'] = ['exp','ylmoney+'.$jifen*0.3];
                     $zeng_money = $jifen*0.54;
                 }else{
                     $zeng_money = $jifen*0.84;
                 }
                 //每10天解冻一次
-                if($member_info['intday']%10==0){
+                if(($member_info['intday']+1)%10==0){
                     $m_data['integrals'] = ['exp','integrals+'.($zeng_money+$member_info['intmoney'])];
                     $m_data['intmoney'] = 0;
                 }else{

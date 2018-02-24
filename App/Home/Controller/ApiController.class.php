@@ -97,7 +97,7 @@ class ApiController extends CommonController {
         //$post['user_name']  用户名
         //$post['user_code']  用户编号
         //$post['levels']     等级
-        //$post['integral']   激活成功给的总积分 分200天分完
+        //$post['integral']   激活成功给的总积分 分100天分完
         //$post['times']      时间
         //$post['md5key']     加密串
 
@@ -406,6 +406,107 @@ class ApiController extends CommonController {
         } else {
             $result['status'] = "-4";
             $result['info'] = '更新失败';
+            return $this->ajaxReturn($result);
+        }
+    }
+    //贝多注册接口
+    public function beiduo_001(){
+        $post = I('post.');
+        //正常的POST传输
+        //$post['bd_id']        会员中心用户ID(必须)
+        //$post['bd_code']        会员中心用户编号(必须)
+        //$post['pwd1']       登陆密码（必须）
+        //$post['pwd2']       支付密码（必须）
+        //$post['integrals']    初始化的积分数量
+        //$post['times']      时间（必须）
+        //$post['md5key']     加密串（必须）
+
+        $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
+        $token_this = md5($post["times"] . md5($key));
+        //验正数据是否被修改
+        if ($post["md5key"] != $token_this) {
+            $result['status'] = "-1";
+            $result['info'] = '数据传输错误';
+            return $this->ajaxReturn($result);
+        }
+        //验正邮箱 是否注册过
+        //写入成功反回 1
+        //写入失败反回 -2
+        $member = M('Member');
+        $re_code = $member->where(array('bd_code' => $post['bd_code']))->find();
+
+        if ($re_code) {
+            $result['status'] = "-2";
+            $result['info'] = "该邮箱已存在";
+            return $this->ajaxReturn($result);
+        }else {
+            //写入数据库------》
+            $data = [
+                'bd_code' => $post['bd_code'],
+                'bd_id' => $post['bd_id'],
+                'pwd' => $post['pwd1'],
+                'pwdtrade' => $post['pwd2'],
+                'reg_time' => time(),
+                'integrals' => floatval($post['integrals'])
+            ];
+            $re = $member->add($data);
+            if ($re) {
+                $result['status'] = "1";
+                $result['info'] = '注册成功';
+                return $this->ajaxReturn($result);
+            } else {
+                $result['status'] = "-4";
+                $result['info'] = '注册失败';
+                return $this->ajaxReturn($result);
+            }
+        }
+    }
+    //贝多传送积分接口
+    public function beiduo_002(){
+        $post = I('post.');
+        //正常的POST传输
+        //$post['bd_id']        会员中心用户ID
+        //$post['integrals']     转入积分
+        //$post['times']      时间
+        //$post['md5key']     加密串
+
+        $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
+        $token_this = md5($post["times"] . md5($key));
+        //验正数据是否被修改
+        if ($post["md5key"] != $token_this) {
+            $result['status'] = "-1";
+            $result['info'] = '数据传输错误';
+            return $this->ajaxReturn($result);
+        }
+        //验正$post['times']时间 小于或等于上次转入金额时间不给通过
+        $member = M('Member');
+        $info = $member->where(array('bd_id' => $post['bd_id']))->field('member_id,posttime')->find();
+        if ($info['posttime'] >= $post['times']) {
+            $result['status'] = "-2";
+            $result['info'] = '数据传输错误';
+            return $this->ajaxReturn($result);
+        }
+
+        //写入数据库------》
+        //转入金额成功记录post['times']时间
+        //写入成功反回 1
+        //写入失败反回 -2
+        $re = $member->where(['bd_id' => $post['bd_id']])->setInc('integrals', $post['integrals']);
+        if ($re) {
+            $this->inte_log($info['member_id'], $post['integrals'], 1, '积分转入'); //积分日志
+            $res = $member->where(['bd_id' => $post['bd_id']])->setField('posttime', $post['times']);
+            if ($res) {
+                $result['status'] = "1";
+                $result['info'] = '数据写入成功';
+                return $this->ajaxReturn($result);
+            } else {
+                $result['status'] = "-3";
+                $result['info'] = '数据写入失败';
+                return $this->ajaxReturn($result);
+            }
+        } else {
+            $result['status'] = "-3";
+            $result['info'] = '数据写入失败';
             return $this->ajaxReturn($result);
         }
     }
