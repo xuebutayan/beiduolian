@@ -23,6 +23,7 @@
                     <dd style="color:#333333;font-size:14px;" >用户名：{$u_info['user_name']|default='暂无'}</dd>
                     <dd style="color:#333333;font-size:14px;">邮箱：{$u_info['email']}</dd>
                     <dd style="color:#333333;font-size:14px;">代理编号：{$u_info['user_code']|default="暂无"}</dd>
+                    <dd style="color:#333333;font-size:14px;">贝多编号：{$u_info['bd_code']|default="暂无"}</dd>
                 </dl>
               </div>
               <style>
@@ -32,7 +33,7 @@
               </style>
               <div style="float:left;">
                 <dl class="top_01">
-                    <span class="top_01">ALPS MT4</span>
+                    <span class="top_01">MSC</span>
 
                     <dd style="color:#333333;" >预留金：{$u_info['ylmoney']}个</dd>
 
@@ -62,7 +63,7 @@
               </div>
               <!--阿尔卑斯信息-->
               <div style="float:left;">
-                <dl class="top_01"><span class="top_01">阿尔卑斯信息</span>
+                <dl class="top_01"><span class="top_01">贝多连信息</span>
                     <dt>可用：{$alps_info['num']}</span></dt>
                     <dd>冻结：{$alps_info['forzen_num']}</dd>
                     <dd>总资产：{$alps_info['num']+$alps_info['forzen_num']}</dd>

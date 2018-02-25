@@ -122,7 +122,7 @@ class ApiController extends CommonController {
         $data = [
             'user_id' => $post['uid'],
             'integral' => $post['integral'],
-            'remain_days' => 100,
+            'remain_days' => $this->agent_type[$post['levels']][2],//100,
             'lastupdate' => strtotime(date('Y-m-d', time())),
             'nextupdate' => strtotime(date('Y-m-d', time() + 86400)),
             'posttime' => $post['times'],

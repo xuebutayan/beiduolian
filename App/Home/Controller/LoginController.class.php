@@ -107,7 +107,7 @@ class LoginController extends CommonController{
         session('STATUS',$info['status']);//用户状态
         //如果是贝多会员，需要同步积分
         if($info['bd_code']){
-            $url = C('bd_url');
+            $url = C('bd_url').'/index.php?mod=api&act=logintb';
             $time = time();
             $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
             $data = [
