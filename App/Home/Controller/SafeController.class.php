@@ -36,7 +36,7 @@ class SafeController extends HomeController {
 
         $this->assign('alps_info',$alps);
         $this->assign('pan',$pan);
-
+        $this->assign('u_info',$u_info);
 		$this->assign('empty','暂无数据');
         $this->display();
      }
