@@ -420,6 +420,7 @@ class ApiController extends CommonController {
         //$post['integrals']    初始化的积分数量
         //$post['times']      时间（必须）
         //$post['md5key']     加密串（必须）
+        //$post['nosale']   1禁止出售积分0允许出售（必须）
 
         $key = 'GDSL28GSJGJ2G5YH6JSGS03S';
         $token_this = md5($post["times"] . md5($key));
@@ -447,7 +448,8 @@ class ApiController extends CommonController {
                 'pwd' => $post['pwd1'],
                 'pwdtrade' => $post['pwd2'],
                 'reg_time' => time(),
-                'integrals' => floatval($post['integrals'])
+                'integrals' => floatval($post['integrals']),
+                'nosale' =>intval($post['nosale'])
             ];
             $re = $member->add($data);
             if ($re) {
